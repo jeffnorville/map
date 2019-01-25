@@ -6,6 +6,9 @@ setwd("C:/Users/Norville/Documents/spatial_data/sadapt")
 sars <- readMat('SARs4EA.mat')
 
 d <- sars$SARs4EA
+df <- as.data.frame(d)
+
+
 dgeometry <- d[[1]]
 dx        <- d[[2]]
 dy        <- d[[3]]
