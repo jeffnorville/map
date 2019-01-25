@@ -1,8 +1,6 @@
-
-
-
-
 #from https://stackoverflow.com/questions/11671883/importing-an-array-from-matlab-into-r
+# better https://stackoverflow.com/questions/28080579/how-to-load-a-matlab-struct-into-a-r-data-frame
+
 library(R.matlab)
 setwd("C:/Users/Norville/Documents/spatial_data/sadapt")
 sars <- readMat('SARs4EA.mat')
