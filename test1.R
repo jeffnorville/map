@@ -7,6 +7,7 @@ sars <- readMat('SARs4EA.mat', fixNames = TRUE)
 #sars2 <- readMat('SARs4EA.mat')
 #all.equal(sars, sars2)
 
+# this pulls data object into dataframe
 d <- sars$SARs4EA
 df <- as.data.frame(d)
 df$`1.1`
@@ -17,14 +18,16 @@ dft <- t(df)
 head(dft)
 head(df)
 
+df$`1.1`
+
 dft$`1.1`
 
-
 #http://lukaspuettmann.com/2017/03/13/matlab-struct-to-r-dataframe/
-varNames        <- names(sars$SARs4EA[,,1])
+#varNames        <- names(sars$SARs4EA[,,1])
+varNames        <- names(sars$SARs4EA[,1,]) #like "fieldnames(SARs4EA)" from matlab
 datList         <- sars$SARs4EA
-datList         <- lapply(datList, unlist, use.names=FALSE) 
-sarsdata        <- as.data.frame(datList) #where wheels come off - datList unlisting doesn't appreciate (what part?) complexity of file
+datList         <- lapply(datList, unlist, use.names=FALSE) #tried keeping names too
+sarsdata        <- as.data.frame(datList) #where wheels come off - datList unlisting doesn't appreciate (what part?) complexity of file "les arguments impliquent des nombres de lignes différents"
 names(sarsdata) <- varNames
 
 
