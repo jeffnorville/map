@@ -12,13 +12,16 @@ d <- sars$SARs4EA
 df <- as.data.frame(d)
 df$`1.1`
 
+#data is far from tidy, transpose?
 dft <- t(df)
 #wups https://stackoverflow.com/questions/6778908/transpose-a-data-frame
 
 head(dft)
+
 head(df)
 
 df$`1.1`
+df$`2.1`
 
 dft$`1.1`
 
