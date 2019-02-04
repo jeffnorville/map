@@ -6,9 +6,15 @@ library(maps)
 library(mapdata)
 library(broom)
 
+<<<<<<< HEAD
 libs <- c("rgdal", "maptools", "gridExtra")
 lapply(libs, require, character.only = TRUE)
 geomdata <- readOGR(dsn = "./smallagriculturalareasshapefile", "PRA_EPGS3035")
+=======
+
+
+
+>>>>>>> 8620ef9c6be4dd4f801e6fafaeaa50273ce84549
 
 france <- map_data("france")
 
