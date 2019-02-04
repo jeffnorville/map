@@ -6,6 +6,10 @@ library(maps)
 library(mapdata)
 library(broom)
 
+
+
+
+
 france <- map_data("france")
 ggplot() + geom_polygon(data = france, aes(x=long, y = lat, group = group)) + 
   coord_fixed(1.2)
