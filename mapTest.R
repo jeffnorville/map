@@ -8,13 +8,12 @@ library(broom)
 
 libs <- c("rgdal", "maptools", "gridExtra")
 lapply(libs, require, character.only = TRUE)
-geomdata <- readOGR(dsn = "./smallagriculturalareasshapefile", "PRA_EPGS3035")
+libraryloc <- file.path("C:/Users/Norville/Documents/spatial_data/sadapt/smallagriculturalareasshapefile")
+geomdata <- readOGR(dsn = libraryloc, "PRA_EPGS3035")
 
 
 france <- map_data("france")
-
-ggplot() + geom_polygon(data = france, aes(x=long, y = lat, group = group)) + 
-  coord_fixed(1.2)
+#ggplot() + geom_polygon(data = france, aes(x=long, y = lat, group = group)) + coord_fixed(1.2)
 
 ggplot() + geom_polygon(data = geomdata, aes(x=long, y = lat, group = group)) + 
   coord_fixed(.8)
