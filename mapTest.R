@@ -6,6 +6,7 @@ library(maps)
 library(mapdata)
 library(broom)
 
+
 libs <- c("rgdal", "maptools", "gridExtra")
 lapply(libs, require, character.only = TRUE)
 libraryloc <- file.path("C:/Users/Norville/Documents/spatial_data/sadapt/smallagriculturalareasshapefile")
