@@ -3,10 +3,10 @@ library("sf")
 library(sp)
 
 
-Department
-02
-60
-80
+#Department list:
+#02
+#60
+#80
 
 rm(list=ls())
 
