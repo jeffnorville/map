@@ -14,6 +14,82 @@ rm(list=ls())
 deps <- st_read("C:/Users/Norville/Documents/basemap/DepartmentFR.shp") #, package="sf")
 pras <- st_read("C:/Users/Norville/Documents/basemap/smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
 
+# add CODE_GROUPE_CULTURE to spatial dataframe
+
+# counts
+length(ilots_2008_002$ID_ILOT)
+length(ilotsCult_2008_002$ID_ILOT)
+length(ilots_2008_060$ID_ILOT)
+length(ilotsCult_2008_060$ID_ILOT)
+length(ilots_2008_080$ID_ILOT)
+length(ilotsCult_2008_080$ID_ILOT)
+
+min(ilotsCult_2008_002$ID_ILOT)
+min(ilots_2008_002$ID_ILOT)
+
+max(ilotsCult_2008_002$ID_ILOT)
+max(ilots_2008_002$ID_ILOT)
+
+###dept 02
+sf_2008_002 <- st_as_sf(
+  ilots_2008_002,
+  coord = c('x', 'y'),
+  crs = proj4string
+)
+or
+  crs="+init=epsg:32631"
+
+  ###dept 60
+  sf_2008_060 <- st_as_sf(
+    ilots_2008_060,
+    coord = c('x', 'y'),
+    crs="+init=epsg:32631"
+  )
+  
+  ###dept 80
+  sf_2008_080 <- st_as_sf(
+    ilots_2008_080,
+    coord = c('x', 'y'),
+    crs="+init=epsg:32631"
+  )
+  
+  
+plot(sf_2008_002)
+plot(sf_2008_060, add=TRUE)
+plot(sf_2008_080, add=TRUE)
+
+plot(pras, add=TRUE)
+
+
+
+#matching polygon to cult, from
+#https://stackoverflow.com/questions/3650636/how-to-attach-a-simple-data-frame-to-a-spatialpolygondataframe-in-r
+sf_2008_002@data = data.frame(sf_2008_002@data, ilotsCult_2008_002[match(sf_2008_002@data[,ID_ILOT], ilotsCult_2008_002[,ID_ILOT]),])
+
+
+add_2008_002 <- (ilotsCult_2008_002$ID_ILOT, ilotsCult_2008_002$CODE_GROUPE_CULTURE)
+
+m_cult_ilots_2008_002 <- merge(ilotsCult_2008_002, ilots_2008_002, by="ID_ILOT")
+
+class(m_cult_ilots_2008_002)
+plot(m_cult_ilots_2008_002)
+
+summary(m_cult_ilots_2008_002)
+
+
+ggplot() +
+  geom_sf(mapping = aes(colour = CODE_GROUPE_CULTURE), data = m_cult_ilots_2008_002) 
+
++
+  coord_sf()
+
+
+head(ilots_2008_002)
+head(ilotsCults_2008_002)
+summary(ilots_2008_002)
+
+ggplot(ilots_2008_002)
+
 library(sp)
 library(rgdal)
 #SCR EPSG:2154 - RGF93 / Lambert-93 - Projeté
@@ -40,7 +116,9 @@ st_crs("+init=epsg:3857 +units=km")$units # character
 proj4string(pras)
 st_crs(pras) = 3035
 
-
+require(RPG)
+load(system.file("extdata", "C:/opt/donnees_R/RPG/V2/ilots_2008_003.rda",package="RPG"))
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_003.rda",package="RPG")
 
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
@@ -80,6 +158,9 @@ writeOGR(cities, td, "cities", driver="ESRI Shapefile", overwrite_layer=TRUE)
 
 
 ggplot(ilots_2008_002)
+ggplot(ilots_2008_060)
+ggplot(ilots_2008_080)
+
 ds <- na.omit(ilots_2008_002)
 ggplot(ds)
 summary(ds)
