@@ -7,8 +7,7 @@ CLC2018 <- raster(str_name)
 
 head(CLC2018)
 class(CLC2018)
-
-
+summary(CLC2018)
 
 library(rpostgis)
 con  <-  dbConnect("PostgreSQL",
