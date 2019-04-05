@@ -14,12 +14,24 @@ library("sf")
 library(dplyr)
 deps <- st_read("C:/Users/Norville/Documents/basemap/DepartmentFR.shp") #, package="sf")
 pras <- st_read("C:/Users/Norville/Documents/basemap/smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
+#find coord system
+plot(deps)
+st_proj_info(deps) #no idea
+#deps$epsg #(currently null)
 #assign coord system
+st_crs(deps) = 2154
 
+#change coord system
+library(dplyr)
+deps@proj4string
+x = deps %>% st_set_crs(2154) %>% st_transform(3035)
+plot(x)
+summary(x)
+#x@proj4string
+x %>% select(11) %>% head(2) #still wgs84???
 
 st_overlaps()
 
-deps %>% select(11) %>% head(2)
 
 
 
@@ -43,6 +55,7 @@ min(ilots_2008_002$ID_ILOT)
 max(ilotsCult_2008_002$ID_ILOT)
 max(ilots_2008_002$ID_ILOT)
 
+class(ilots_2008_002) #sp
 ###dept 02
 sf_2008_002 <- st_as_sf(
   ilots_2008_002,
@@ -51,6 +64,27 @@ sf_2008_002 <- st_as_sf(
 )
 or
   crs="+init=epsg:32631"
+
+#conversion test
+class(ilots_2008_002)
+summary(ilots_2008_002)
+sf_ilots_2008_002 <- as_Spatial(ilots_2008_002, cast=TRUE) #NOPE
+
+###this works
+###dept 002
+sf_2008_002 <- st_as_sf(
+  ilots_2008_002,
+  coord = c('x', 'y'),
+  crs="+init=epsg:32631"
+)
+class(sf_2008_002)
+plot(sf_2008_002)
+sf_2008_002@proj4string
+sf_2008_002_3035@proj4string
+
+sf_2008_002_3035 <-  st_transform(sf_2008_002, 3035)  
+plot(sf_2008_002_3035)
+
 
   ###dept 60
   sf_2008_060 <- st_as_sf(
@@ -159,9 +193,10 @@ deptJura <- deps %>% filter(NOM_DEPT=='JURA')
 plot(deptJura)
 
 require(RPG)
-load(system.file("extdata", "C:/opt/donnees_R/RPG/V2/ilots_2008_003.rda",package="RPG"))
+#doesnt work load(system.file("extdata", "C:/opt/donnees_R/RPG/V2/ilots_2008_003.rda",package="RPG"))
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_003.rda",package="RPG")
 
+#load Picardie
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
 
@@ -169,6 +204,19 @@ load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_080.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_080.rda")
+
+summary(ilots_2008_060)
+plot(ilots_2008_060)
+
+#this is confusing -- the Cult ilots from dept 60 should align with the ilots from 60?
+82851-61407 #=21444
+length(ilots_2008_060$ID_ILOT) # 61407
+min(ilots_2008_060$ID_ILOT) # 1368340
+max(ilots_2008_060$ID_ILOT) # 5989419
+
+length(ilotsCult_2008_060$ID_ILOT) # 82851
+min(ilotsCult_2008_060$ID_ILOT) # 527733
+max(ilotsCult_2008_060$ID_ILOT) # 5989419
 
 
 # join non-spatial attributes
@@ -197,7 +245,7 @@ additional_data <- data.frame(
   my_data <- runif(nrow(nc))
 )
 
-left_join(nc, additional_data, by = 'CNTY_ID')
+#for ex left_join(nc, additional_data, by = 'CNTY_ID')
 
 
 summary(ilots_2008_002)
