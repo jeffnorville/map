@@ -9,11 +9,15 @@ library(sp)
 
 rm(list=ls())
 
+base_library = "C:/Users/Jeff Norville/Documents/GIS/basemap/"
+#base_library = "C:/Users/Norville/Documents/" # "C:/Users/Norville/Documents/
+corentin_library = "C:/opt/donnees_R/RPG/V2"
+  
 #first load shapefiles for Departments, PRAs
 library("sf")
 library(dplyr)
-deps <- st_read("C:/Users/Norville/Documents/basemap/DepartmentFR.shp") #, package="sf")
-pras <- st_read("C:/Users/Norville/Documents/basemap/smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
+deps <- st_read(base_library + "DepartmentFR.shp") #, package="sf")
+pras <- st_read(base_library + "smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
 #assign coord system
 
 
