@@ -12,7 +12,7 @@ writeOGR(ilots_2008_002, dsn="ilots_2008_002", layer="ilots_2008_002", driver="E
 head(ilots_2008_002)
 
 
-try(writeOGR(cities, td, "cities", driver="ESRI Shapefile"))
+try(writeOGR(ilots_2008_002, td, "cities", driver="ESRI Shapefile"))
 writeOGR(cities, td, "cities", driver="ESRI Shapefile", overwrite_layer=TRUE)
 
 
