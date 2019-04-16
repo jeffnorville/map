@@ -16,17 +16,24 @@ corentin_library = "C:/opt/donnees_R/RPG/V2"
 #first load shapefiles for Departments, PRAs
 library("sf")
 library(dplyr)
-<<<<<<< HEAD
 deps <- st_read(base_library + "DepartmentFR.shp") #, package="sf")
-pras <- st_read(base_library + "smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
-=======
-deps <- st_read("C:/Users/Norville/Documents/basemap/DepartmentFR.shp") #, package="sf")
-pras <- st_read("C:/Users/Norville/Documents/basemap/smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
+path <- paste(base_library, "smallagriculturalareasshapefile/PRA_EPGS3035.shp", sep="")
+pras <- st_read(path) #, package="sf")
+plot(pras)
+class(pras)
+summary(pras)
+st_crs(pras) = 3035
+
+#pras <- st_read("C:/Users/Jeff Norville/Documents/GIS/GIS DataBase/smallagriculturalareasshapefile/PRA_EPGS3035.shp")
+#pras %>% st_set_crs(3035)
+
+#deps <- st_read("C:/Users/Norville/Documents/basemap/DepartmentFR.shp") #, package="sf")
+#pras <- st_read("C:/Users/Norville/Documents/basemap/smallagriculturalareasshapefile/PRA_EPGS3035.shp") #, package="sf")
 #find coord system
 plot(deps)
 st_proj_info(deps) #no idea
 #deps$epsg #(currently null)
->>>>>>> bc9702f30a59003423ac626da5d0a522a358baac
+
 #assign coord system
 st_crs(deps) = 2154
 
