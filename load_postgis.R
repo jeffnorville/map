@@ -13,7 +13,7 @@ library(rpostgis)
 #                    password = 'apismal2019')
 
 con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal',
+                   dbname = 'api2',
                    host   = 'localhost',
                    user   = 'pgisuser',
                    password = 'apismal2019')
@@ -101,7 +101,7 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_074.rda")
 
 
 1. convert PRA file to EPSG=32631 (EPSG:32631 - WGS 84 / UTM zone 31N - Projeté)
-1. BETTER, convert all incoming to 3035
+1. BETTER, convert all incoming to 3035 once in postgis (faster)
 
 # CONVERSION COORDS
 ilots3035_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
@@ -238,7 +238,7 @@ class(ilots_2008_089$ID_ILOT) #no more problem!!
 library(rpostgis)
 pgInsert(con, 
          c("public","ilots"), 
-         ilots_2008_071, 
+         ilots_2008_074,
          geom = "geom", 
          df.mode = FALSE,
          partial.match = FALSE, 
@@ -266,7 +266,7 @@ summary(ilotsCult_2008_002)
 
 pgInsert(con, 
          c("public","culture"), 
-         ilotsCult_2008_080, 
+         ilotsCult_2008_089,
          geom = FALSE, 
          df.mode = FALSE,
          partial.match = FALSE, 
@@ -279,8 +279,4 @@ pgInsert(con,
          return.pgi = FALSE, 
          df.geom = NULL,
          geog = FALSE)
-
-
-# PostGIS -> R
-
 
