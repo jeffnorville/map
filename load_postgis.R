@@ -230,7 +230,7 @@ ilots_2008_074$ID_ILOT <- as.numeric(ilots_2008_074$ID_ILOT)
 ilots_2008_089$ID_ILOT <- as.numeric(ilots_2008_089$ID_ILOT)
 
 
-class(ilots_2008_089$ID_ILOT) #no more problem!!
+class(ilots_2008_073$ID_ILOT) #no more problem!!
 
 ## 4. CONVERT COORDINATES
 # can do this later within postgis (and faster)
@@ -238,7 +238,7 @@ class(ilots_2008_089$ID_ILOT) #no more problem!!
 library(rpostgis)
 pgInsert(con, 
          c("public","ilots"), 
-         ilots_2008_071, 
+         ilots_2008_089, 
          geom = "geom", 
          df.mode = FALSE,
          partial.match = FALSE, 
@@ -266,7 +266,7 @@ summary(ilotsCult_2008_002)
 
 pgInsert(con, 
          c("public","culture"), 
-         ilotsCult_2008_080, 
+         ilotsCult_2008_089,
          geom = FALSE, 
          df.mode = FALSE,
          partial.match = FALSE, 
@@ -279,8 +279,4 @@ pgInsert(con,
          return.pgi = FALSE, 
          df.geom = NULL,
          geog = FALSE)
-
-
-# PostGIS -> R
-
 
