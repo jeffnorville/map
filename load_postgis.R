@@ -68,6 +68,7 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_089.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_009.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_012.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_031.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_032.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_046.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_065.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_081.rda")
@@ -75,6 +76,7 @@ load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_082.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_009.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_012.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_031.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_032.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_046.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_065.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_081.rda")
@@ -229,16 +231,28 @@ ilots_2008_073$ID_ILOT <- as.numeric(ilots_2008_073$ID_ILOT)
 ilots_2008_074$ID_ILOT <- as.numeric(ilots_2008_074$ID_ILOT)
 ilots_2008_089$ID_ILOT <- as.numeric(ilots_2008_089$ID_ILOT)
 
+#load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
+ilots_2008_009$ID_ILOT <- as.numeric(ilots_2008_009$ID_ILOT)
+ilots_2008_012$ID_ILOT <- as.numeric(ilots_2008_012$ID_ILOT)
+ilots_2008_031$ID_ILOT <- as.numeric(ilots_2008_031$ID_ILOT)
+ilots_2008_032$ID_ILOT <- as.numeric(ilots_2008_032$ID_ILOT)
+ilots_2008_046$ID_ILOT <- as.numeric(ilots_2008_046$ID_ILOT)
+ilots_2008_065$ID_ILOT <- as.numeric(ilots_2008_065$ID_ILOT)
+ilots_2008_081$ID_ILOT <- as.numeric(ilots_2008_081$ID_ILOT)
+ilots_2008_082$ID_ILOT <- as.numeric(ilots_2008_082$ID_ILOT)
 
-class(ilots_2008_089$ID_ILOT) #no more problem!!
+
+class(ilots_2008_082$ID_ILOT) #no more problem!!
 
 ## 4. CONVERT COORDINATES
 # can do this later within postgis (and faster)
 
 library(rpostgis)
+
+#load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
 pgInsert(con, 
          c("public","ilots"), 
-         ilots_2008_074,
+         ilots_2008_082,
          geom = "geom", 
          df.mode = FALSE,
          partial.match = FALSE, 
@@ -263,10 +277,10 @@ head(ilotsCult_2008_002)
 
 summary(ilotsCult_2008_002)
 
-
+#load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
 pgInsert(con, 
          c("public","culture"), 
-         ilotsCult_2008_089,
+         ilotsCult_2008_082,
          geom = FALSE, 
          df.mode = FALSE,
          partial.match = FALSE, 
