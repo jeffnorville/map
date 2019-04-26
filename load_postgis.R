@@ -277,10 +277,12 @@ head(ilotsCult_2008_002)
 
 summary(ilotsCult_2008_002)
 
-#load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
+#load Picardie (002, 060, 080)
+#FAIT load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
+#FAIT load Rhone-Alpes (reg 82) (Department, 01, 07, 26, 38, 42, 69, 73, 74)
 pgInsert(con, 
          c("public","culture"), 
-         ilotsCult_2008_082,
+         ilotsCult_2008_021,
          geom = FALSE, 
          df.mode = FALSE,
          partial.match = FALSE, 
