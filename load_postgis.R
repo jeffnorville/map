@@ -10,26 +10,26 @@ library(rpostgis)
 #                    dbname = 'api2',
 #                    host   = 'localhost',
 #                    user   = 'pgisuser',
-#                    password = 'apismal2019')
+#                    password = 'mine')
 
 con  <-  dbConnect("PostgreSQL",
                    dbname = 'api2',
                    host   = 'localhost',
                    user   = 'pgisuser',
-                   password = 'apismal2019')
+                   password = 'mine')
 
 con  <-  dbConnect("PostgreSQL",
                    dbname = 'apismal',
                    host   = 'localhost',
                    user   = 'postgres',
-                   password = 'postgres')
+                   password = 'mine')
 
 
 con  <-  dbConnect("PostgreSQL",
                    dbname = 'postgres',
                    host   = 'localhost',
                    user   = 'postgres',
-                   password = 'postgres')
+                   password = 'alsomine')
 
 
 
