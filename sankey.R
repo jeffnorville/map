@@ -1,9 +1,9 @@
 # sankey
 library(networkD3)
 nodes = data.frame("name" = 
-                     c("Node A", # Node 0
-                       "Node B", # Node 1
-                       "Node C", # Node 2
+                     c("Land Use A", # Node 0
+                       "Land Use B", # Node 1
+                       "Biodiversity", # Node 2
                        "Node D"))# Node 3
 links = as.data.frame(matrix(c(
   0, 1, 10, # Each row represents a link. The first number
