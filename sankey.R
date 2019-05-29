@@ -1,3 +1,4 @@
+# interactive (web?) image
 # sankey
 library(networkD3)
 nodes = data.frame("name" = 

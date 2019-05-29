@@ -18,7 +18,3 @@ alluvial( tit[,1:4], freq=tit$Freq, border=NA,
           hide = tit$Freq < quantile(tit$Freq, .50),
           col=ifelse( tit$Survived == "No" & tit$Sex == "Female", "violet", "gray") )
 
-alluvial( tit[,1:4], freq=tit$Freq, border=NA,
-          hide = tit$Freq < quantile(tit$Freq, .50),
-          col=ifelse( tit$Class == "1st" & tit$Sex == "Male", "blue", "grey") )
-
