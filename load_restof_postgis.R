@@ -24,3 +24,10 @@ load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_080.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_060.rda")
+
+CHAMPAGNE-ARDENNE (8, 10, 52, 51)
+
+HAUTE-NORMANDIE (27, 76)
+
+CENTRE (18, 28, 36, 37, 41, 45)
+
