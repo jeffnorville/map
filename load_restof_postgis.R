@@ -1,3 +1,8 @@
+# mostly this is dumb (better to loop thru all files)
+# like this: https://gis.stackexchange.com/questions/231601/looping-over-several-input-files-in-r
+# but for the moment I need to only load dept by dept for  local machine
+# should automate for remote db load
+
 #load Picardie (002, 060, 080)
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_060.rda")
@@ -189,3 +194,49 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_02A.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_02B.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_02A.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_02B.rda")
+
+library(rpostgis)
+
+# load ilots
+# 1. coordinates
+ilots3035_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+
+# 2. convert ID_ILOT to num from str
+ilots_2008_009$ID_ILOT <- as.numeric(ilots_2008_009$ID_ILOT)
+
+# 3. load by pgInsert
+pgInsert(con, 
+         c("public","ilots"), 
+         ilots_2008_082,
+         geom = "geom", 
+         df.mode = FALSE,
+         partial.match = FALSE, 
+         overwrite = FALSE, 
+         new.id = NULL,
+         row.names = FALSE, 
+         upsert.using = NULL, 
+         alter.names = FALSE,
+         encoding = NULL, 
+         return.pgi = FALSE, 
+         df.geom = NULL,
+         geog = FALSE)
+
+
+
+# load cult files
+pgInsert(con, 
+         c("public","culture"), 
+         ilotsCult_2008_021,
+         geom = FALSE, 
+         df.mode = FALSE,
+         partial.match = FALSE, 
+         overwrite = FALSE, 
+         new.id = NULL,
+         row.names = FALSE, 
+         upsert.using = NULL, 
+         alter.names = FALSE,
+         encoding = NULL, 
+         return.pgi = FALSE, 
+         df.geom = NULL,
+         geog = FALSE)
+
