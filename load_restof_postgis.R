@@ -3,13 +3,70 @@
 # but for the moment I need to only load dept by dept for  local machine
 # should automate for remote db load
 
-#load Picardie (002, 060, 080)
+#load Picardie (002, 060, 080) (done)
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_080.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_080.rda")
+
+library(rpostgis)
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'apismal',
+                   host   = 'localhost',
+                   user   = 'postgres',
+                   password = 'postgres')
+
+ilots <- "ilots_"
+ilotscult <- "ilotsCult_"
+rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
+file <- files[2]
+
+for (file in files){
+  name <- file
+  subname <- sub(ilots, ilotscult, file)
+  
+  load(file) # put in memory
+  ## Rembmer to rm(file) at end of func
+  if subname == ilots
+    # 1. coordinates
+    file <- spTransform(file, "+init=epsg:3035")
+    # 2. convert ID_ILOT to num from str
+    file$ID_ILOT <- as.numeric(file$ID_ILOT)
+    # 3. load by pgInsert
+    pgInsert(con, 
+             c("public","ilots"), 
+             file, #ex ilots_2008_082
+             geom = "geom", 
+             df.mode = FALSE,
+             partial.match = FALSE, 
+             overwrite = FALSE, 
+             new.id = NULL,
+             row.names = FALSE, 
+             upsert.using = NULL, 
+             alter.names = FALSE,
+             encoding = NULL, 
+             return.pgi = FALSE, 
+             df.geom = NULL,
+             geog = FALSE)
+    elsif
+    
+    end if
+  
+  
+  )
+}
+
+
+# 23 HAUTE-NORMANDIE (27, 76)
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_027.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_076.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_027.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_076.rda")
+
+
 
 #ILE-DE-FRANCE (91, 92, 75, 77, 93, 95, 94, 78)
 
@@ -40,12 +97,6 @@ load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_010.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_052.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_051.rda")
 
-
-# 23 HAUTE-NORMANDIE (27, 76)
-load("C:/opt/donnees_R/RPG/V2/ilots_2008_027.rda")
-load("C:/opt/donnees_R/RPG/V2/ilots_2008_076.rda")
-load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_027.rda")
-load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_076.rda")
 
 # 24 CENTRE (18, 28, 36, 37, 41, 45)
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_018.rda")
