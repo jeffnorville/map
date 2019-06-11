@@ -13,23 +13,23 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_080.rda")
 
 library(rpostgis)
 con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal',
+                   dbname = 'api2', #'apismal',
                    host   = 'localhost',
-                   user   = 'postgres',
-                   password = 'postgres')
+                   user   = 'pgisuser', #'postgres',
+                   password = 'apismal2019') #'postgres'
 
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
-file <- files[2]
+# file <- files[3]
 
 for (file in files){
   name <- file
   subname <- sub(ilots, ilotscult, file)
   
   load(file) # put in memory
-  ## Rembmer to rm(file) at end of func
+  ## Remember to rm(file) at end of func
   if subname == ilots
     # 1. coordinates
     file <- spTransform(file, "+init=epsg:3035")
@@ -51,7 +51,9 @@ for (file in files){
              return.pgi = FALSE, 
              df.geom = NULL,
              geog = FALSE)
-    elsif
+#    rm(file)
+    elsif subname == ilotscult
+      fprint(subname)
     
     end if
   
