@@ -12,18 +12,35 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_080.rda")
 
 library(rpostgis)
+# con  <-  dbConnect("PostgreSQL",
+#                    dbname = 'api2', #'apismal',
+#                    host   = 'localhost',
+#                    user   = 'pgisuser', #'postgres',
+#                    password = 'apismal2019') #'postgres'
+
 con  <-  dbConnect("PostgreSQL",
-                   dbname = 'api2', #'apismal',
+                   dbname = 'apismal',
                    host   = 'localhost',
-                   user   = 'pgisuser', #'postgres',
-                   password = 'apismal2019') #'postgres'
+                   user   = 'postgres',
+                   password = 'postgres')
 
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
-# file <- files[3]
 
+# need to seperate ilot from ilotcult files after loading, here are things to try
+ file <- files[3]
+
+ txt <- c("arm","foot","lefroo", "bafoobar")
+ if(length(i <- grep("foo", txt)))
+   cat("'foo' appears at least once in\n\t", txt, "\n")
+ i # 2 and 4
+ txt[i]
+
+ which()
+ TRUE %in% (list.files() == 'nameoffile.csv') 
+  
 for (file in files){
   name <- file
   subname <- sub(ilots, ilotscult, file)
@@ -37,7 +54,7 @@ for (file in files){
     file$ID_ILOT <- as.numeric(file$ID_ILOT)
     # 3. load by pgInsert
     pgInsert(con, 
-             c("public","ilots"), 
+             c("test","ilots"), #public
              file, #ex ilots_2008_082
              geom = "geom", 
              df.mode = FALSE,
