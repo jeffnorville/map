@@ -3,6 +3,9 @@
 # but for the moment I need to only load dept by dept for  local machine
 # should automate for remote db load
 
+rm(list=ls())
+
+
 #load Picardie (002, 060, 080) (done)
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_060.rda")
@@ -12,17 +15,17 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_060.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_080.rda")
 
 library(rpostgis)
-# con  <-  dbConnect("PostgreSQL",
-#                    dbname = 'api2', #'apismal',
-#                    host   = 'localhost',
-#                    user   = 'pgisuser', #'postgres',
-#                    password = 'apismal2019') #'postgres'
+ con  <-  dbConnect("PostgreSQL",
+                    dbname = 'api2', #'apismal',
+                    host   = 'localhost',
+                    user   = 'pgisuser', #'postgres',
+                    password = 'apismal2019') #'postgres'
 
-con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal',
-                   host   = 'localhost',
-                   user   = 'postgres',
-                   password = 'postgres')
+# con  <-  dbConnect("PostgreSQL",
+#                    dbname = 'apismal',
+#                    host   = 'localhost',
+#                    user   = 'postgres',
+#                    password = 'postgres')
 
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
