@@ -24,6 +24,7 @@ con  <-  dbConnect("PostgreSQL",
                    user   = 'postgres',
                    password = 'postgres')
 
+#here begins file parsing play
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
@@ -40,7 +41,16 @@ files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
 
  which()
  TRUE %in% (list.files() == 'nameoffile.csv') 
-  
+
+name <- files[2]
+# subname <- sub(ilots, ilotscult, file)
+if grepl(ilotscult, file)
+  print("cult")  
+else if grepl(ilots, file)
+  print("ilots only ")
+end if
+
+
 for (file in files){
   name <- file
   subname <- sub(ilots, ilotscult, file)
