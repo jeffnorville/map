@@ -21,11 +21,11 @@ library(rpostgis)
                     user   = 'pgisuser', #'postgres',
                     password = 'apismal2019') #'postgres'
 
-# con  <-  dbConnect("PostgreSQL",
-#                    dbname = 'apismal',
-#                    host   = 'localhost',
-#                    user   = 'postgres',
-#                    password = 'postgres')
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'apismal',
+                   host   = 'localhost',
+                   user   = 'postgres',
+                   password = 'postgres')
 
 #here begins file parsing play
 ilots <- "ilots_"
@@ -35,7 +35,10 @@ files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
 
 # need to seperate ilot from ilotcult files after loading, here are things to try
  file <- files[3]
-
+ list <- strsplit(file, "/")
+ # rm(list)
+ filename <- list[[1]][7]
+ 
  txt <- c("arm","foot","lefroo", "bafoobar")
  if(length(i <- grep("foo", txt)))
    cat("'foo' appears at least once in\n\t", txt, "\n")
