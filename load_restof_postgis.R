@@ -27,11 +27,15 @@ con  <-  dbConnect("PostgreSQL",
                    user   = 'postgres',
                    password = 'postgres')
 
+
+
 #here begins file parsing play
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
+
+
 
 # need to seperate ilot from ilotcult files after loading, here are things to try
  file <- files[3]
