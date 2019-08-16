@@ -33,6 +33,9 @@ con  <-  dbConnect("PostgreSQL",
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+allfiles <- list.files(path=rdadir, full.names = TRUE)
+allfiles <- list.files(path=rdadir, full.names = FALSE)
+
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
 files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
 files_ilotscult <- list.files(path=rdadir, pattern=ilotscult, full.names = FALSE)
