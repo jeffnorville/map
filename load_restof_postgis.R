@@ -32,12 +32,17 @@ ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
+files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
+files_ilotscult <- list.files(path=rdadir, pattern=ilotscult, full.names = FALSE)
 
 # need to seperate ilot from ilotcult files after loading, here are things to try
+# easier to seperate them during load I think
  file <- files[3]
  list <- strsplit(file, "/")
  # rm(list)
  filename <- list[[1]][7]
+ 
+ 
  
  txt <- c("arm","foot","lefroo", "bafoobar")
  if(length(i <- grep("foo", txt)))
@@ -45,17 +50,18 @@ files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
  i # 2 and 4
  txt[i]
 
- which()
+# find files by keyword 2010 in list of ilots_files: 
+y2010_fi <- grep("2010", files_ilots)
+# here they are
+files_ilots[y2010_fi] 
+ 
+# which()
  TRUE %in% (list.files() == 'nameoffile.csv') 
 
 name <- files[2]
 # subname <- sub(ilots, ilotscult, file)
-if grepl(ilotscult, file)
-  print("cult")  
-else if grepl(ilots, file)
-  print("ilots only ")
-end if
 
+# https://stackoverflow.com/questions/20144890/sorting-files-into-folders-by-file-name-in-r
 
 for (file in files){
   name <- file
