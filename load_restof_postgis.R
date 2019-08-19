@@ -37,8 +37,43 @@ allfiles <- list.files(path=rdadir, full.names = TRUE)
 allfiles <- list.files(path=rdadir, full.names = FALSE)
 
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
-files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
+files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 files_ilotscult <- list.files(path=rdadir, pattern=ilotscult, full.names = FALSE)
+
+##############################
+for (file in files_ilots){
+  name <- file
+
+  load(file) # put in memory
+  ## Remember to rm(file) at end of func
+  
+  # 1. coordinates
+  file <- spTransform(file, "+init=epsg:3035")
+  # 2. convert ID_ILOT to num from str
+  file$ID_ILOT <- as.numeric(file$ID_ILOT)
+  # 3. load by pgInsert
+  pgInsert(con, 
+           c("test","ilots"), #public
+           file, #ex ilots_2008_082
+           geom = "geom", 
+           df.mode = FALSE,
+           partial.match = FALSE, 
+           overwrite = FALSE, 
+           new.id = NULL,
+           row.names = FALSE, 
+           upsert.using = NULL, 
+           alter.names = FALSE,
+           encoding = NULL, 
+           return.pgi = FALSE, 
+           df.geom = NULL,
+           geog = FALSE)
+  
+  rm(file)
+  fprint(subname)
+  
+}
+
+##############################
 
 
 
