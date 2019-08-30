@@ -126,12 +126,20 @@ sf_2008_008 <- st_as_sf(
   crs="+init=epsg:32631"
 )
 class(ilots_2008_021)
+plot(ilots_2008_021)
+
 class(sf_2008_021)
 plot(sf_2008_021)
 sf_2008_021_3035 <-  st_transform(sf_2008_021, 3035)  
 plot(sf_2008_021_3035)
 class(sf_2008_021_3035)
 
+summary(ilots_2008_021)
+
+library("rgdal")
+ilots_2008_021_3035 <- spTransform(ilots_2008_021, "+init=epsg:3035")
+summary(ilots_2008_021_3035)
+plot(ilots_2008_021_3035)
 
 class(ilots_2008_002)
 

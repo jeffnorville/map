@@ -41,11 +41,26 @@ files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 files_ilotscult <- list.files(path=rdadir, pattern=ilotscult, full.names = FALSE)
 
 ##############################
+require(sp)
+require(rgdal)
+require(rpostgis)
+
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'api2', #'apismal',
+                   host   = 'localhost',
+                   user   = 'pgisuser', #'postgres',
+                   password = 'apismal2019') #'postgres'
+
+
+rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+ilots <- "ilots_"
+files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+
+
 for (file in files_ilots){
   name <- file
-
-  load(file) # put in memory
-  ## Remember to rm(file) at end of func
+  load(file) # in memory, so
+  ## remember to rm(file) at end of looping func
   
   # 1. coordinates
   file <- spTransform(file, "+init=epsg:3035")
@@ -53,7 +68,7 @@ for (file in files_ilots){
   file$ID_ILOT <- as.numeric(file$ID_ILOT)
   # 3. load by pgInsert
   pgInsert(con, 
-           c("test","ilots"), #public
+           c("test","ilots"), #public -- FOR TESTing
            file, #ex ilots_2008_082
            geom = "geom", 
            df.mode = FALSE,
