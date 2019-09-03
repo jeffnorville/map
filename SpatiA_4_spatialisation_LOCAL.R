@@ -4,21 +4,22 @@
 require(foreign)
 require(dplyr)
 
+
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
-#chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
+chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
+#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
 
 #chemin_GT = paste(get.pc.folder(),"SPATIAL_GT/", sep = "")
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #off
+chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+#chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #off
 
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES" #leno
-chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES" #off
+chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+#chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #off
 
 #chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
 chemin_arc_simu = paste(".", "/arc_simu", sep = "")
@@ -52,16 +53,18 @@ test = as.numeric(test)
 indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
-
-for (nom_gt in liste_fichier_GT){
-  GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-  
-}
+#testing JN
+# lets loop thru them to see why not opening on win but ok (?) on unix
+# for (nom_gt in liste_fichier_GT){
+#   GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
+#   print(paste("loaded: " , nom_gt))
+#   
+# }
 
 # on charge chaque fichier de la liste dans GT
 for (nom_gt in liste_fichier_GT){
   
-  # chargement
+  # chargement (this one appears broken)
   GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
   
   # V5 : ajouter la colonne COUNT qui est dans le shapefile
