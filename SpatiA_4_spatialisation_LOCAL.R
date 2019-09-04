@@ -53,14 +53,6 @@ test = as.numeric(test)
 indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
-#testing JN
-# lets loop thru them to see why not opening on win but ok (?) on unix
-# for (nom_gt in liste_fichier_GT){
-#   GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-#   print(paste("loaded: " , nom_gt))
-#   
-# }
-
 # on charge chaque fichier de la liste dans GT
 for (nom_gt in liste_fichier_GT){
   
