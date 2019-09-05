@@ -58,7 +58,7 @@ files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 
 
 for (file in files_ilots){
-  name <- file
+  # name <- file # what was that for?
   load(file) # in memory, so
   ## remember to rm(file) at end of looping func
   
@@ -66,6 +66,9 @@ for (file in files_ilots){
   file <- spTransform(file, "+init=epsg:3035")
   # 2. convert ID_ILOT to num from str
   file$ID_ILOT <- as.numeric(file$ID_ILOT)
+
+  #spTransform fails sept 5
+  
   # 3. load by pgInsert
   pgInsert(con, 
            c("test","ilots"), #public -- FOR TESTing
