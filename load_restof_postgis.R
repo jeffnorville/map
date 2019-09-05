@@ -42,6 +42,7 @@ files_ilotscult <- list.files(path=rdadir, pattern=ilotscult, full.names = FALSE
 
 ##############################
 require(sp)
+require(sf)
 require(rgdal)
 require(rpostgis)
 
@@ -51,22 +52,45 @@ con  <-  dbConnect("PostgreSQL",
                    user   = 'pgisuser', #'postgres',
                    password = 'apismal2019') #'postgres'
 
+rm(list=ls())
 
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 ilots <- "ilots_"
+# files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 
-
 for (file in files_ilots){
-  # name <- file # what was that for?
-  load(file) # in memory, so
+  print(paste("before load, class ", class(file)))
+  filehand <- load(file)
   ## remember to rm(file) at end of looping func
   
-  # 1. coordinates
+  # 1. coordinates11
+#  filehand <- spTransform(filehand, "+init=epsg:3035")
+  # 2. convert ID_ILOT to num from str
+  filehand$ID_ILOT <- as.numeric(filehand$ID_ILOT)
+  
+  
+  }
+# summary(ilots_2008_027)
+# class(ilots_2008_027$ID_ILOT)
+# ilots_2008_027$ID_ILOT <- as.numeric(ilots_2008_027$ID_ILOT)
+# class(ilots_2008_027$ID_ILOT)
+# 
+# typeof(ilots_2008_076$ID_ILOT)
+
+for (file in files_ilots){
+  # file <- tools::file_path_sans_ext(file) #get object, not filepath which is a char
+  file <- load(file)
+  ## remember to rm(file) at end of looping func
+  
+  # 1. coordinates11
   file <- spTransform(file, "+init=epsg:3035")
   # 2. convert ID_ILOT to num from str
   file$ID_ILOT <- as.numeric(file$ID_ILOT)
-
+  
+  rm(file)
+  rm(fileobj)
+}  
   #spTransform fails sept 5
   
   # 3. load by pgInsert

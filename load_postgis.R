@@ -221,7 +221,7 @@ class(ilots_2008_021$ID_ILOT) #problem
 
 #### important step !!! ####
 
-# 3. BEFORE LOAD - convert ID_ILOT to num from str
+# 3. BEFORE LOADING to DB - convert ID_ILOT to num from str
 ilots_2008_002$ID_ILOT <- as.numeric(ilots_2008_002$ID_ILOT)
 ilots_2008_060$ID_ILOT <- as.numeric(ilots_2008_060$ID_ILOT)
 ilots_2008_080$ID_ILOT <- as.numeric(ilots_2008_080$ID_ILOT)

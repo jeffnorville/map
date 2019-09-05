@@ -202,7 +202,7 @@ if (length(fichiers) != 0){
                     sep = ":",
                     row.names = FALSE)
         
-        print(paste(nom_arc_simu, "cree"))
+        print(paste(nom_arc_simu, " cree"))
         
       } # fin teste si GT present
     } #fin boucle sur les regions
