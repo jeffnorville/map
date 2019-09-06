@@ -58,6 +58,14 @@ rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 ilots <- "ilots_"
 # files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
+CRS <- "+init=epsg:3035"
+
+files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+
+file <- files_ilots[1]
+filehand <- load(file)
+load(file)
+spTransform(file, CRS)
 
 for (file in files_ilots){
   print(paste("before load, class ", class(file)))
@@ -84,7 +92,7 @@ for (file in files_ilots){
   ## remember to rm(file) at end of looping func
   
   # 1. coordinates11
-  file <- spTransform(file, "+init=epsg:3035")
+  file <- spTransform(file, CRS)
   # 2. convert ID_ILOT to num from str
   file$ID_ILOT <- as.numeric(file$ID_ILOT)
   

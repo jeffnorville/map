@@ -102,12 +102,14 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_073.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_074.rda")
 
 
-1. convert PRA file to EPSG=32631 (EPSG:32631 - WGS 84 / UTM zone 31N - Projeté)
-1. BETTER, convert all incoming to 3035 once in postgis (faster)
+# 1. convert PRA file to EPSG=32631 (EPSG:32631 - WGS 84 / UTM zone 31N - Projeté)
+# 1. BETTER, convert all incoming to 3035 once in postgis (faster?)
 
 # CONVERSION COORDS
 ilots3035_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
 plot(ilots3035_2008_002)
+
+class(ilots_2008_002)
 
 class(pras)
 sf_pras <- st_as_sf(
@@ -138,6 +140,11 @@ summary(ilots_2008_021)
 
 library("rgdal")
 ilots_2008_021_3035 <- spTransform(ilots_2008_021, "+init=epsg:3035")
+
+ilots_2008_002_3035 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+
+
+
 summary(ilots_2008_021_3035)
 plot(ilots_2008_021_3035)
 
