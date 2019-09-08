@@ -53,18 +53,23 @@ con  <-  dbConnect("PostgreSQL",
                    password = 'apismal2019') #'postgres'
 
 rm(list=ls())
-
+require(sf)
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 ilots <- "ilots_"
 # files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
-files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
+#files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
 CRS <- "+init=epsg:3035"
 
-files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
-
-file <- files_ilots[1]
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+class(filelist)
+file <- filelist[1]
+class(file)
 filehand <- load(file)
-load(file)
+class(filehand)
+f1 <- load(file)
+class(f1)
+f2 <- st_transform(f1, CRS) # sf version
+f2 <- spTransform(f1, CRS) #sp version
 spTransform(file, CRS)
 
 for (file in files_ilots){

@@ -107,6 +107,8 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_074.rda")
 
 # CONVERSION COORDS
 ilots3035_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+class(ilots_2008_002)
+ilots3035_2008_002 <- st_transform(ilots_2008_002, "+init=epsg:3035")
 plot(ilots3035_2008_002)
 
 class(ilots_2008_002)
@@ -139,6 +141,8 @@ class(sf_2008_021_3035)
 summary(ilots_2008_021)
 
 library("rgdal")
+library("sf")
+
 ilots_2008_021_3035 <- spTransform(ilots_2008_021, "+init=epsg:3035")
 
 ilots_2008_002_3035 <- spTransform(ilots_2008_002, "+init=epsg:3035")
