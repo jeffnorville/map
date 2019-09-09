@@ -5,6 +5,12 @@
 
 rm(list=ls())
 
+#Load library
+library(raster)
+#Load shapefile
+shp <- shapefile("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+
+
 library(sf)
 CRS <- "+init=epsg:3035"
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
@@ -97,6 +103,7 @@ f2 <- st_transform(f1, CRS) # sf version
 f2 <- spTransform(f1, CRS) #sp version
 spTransform(file, CRS)
 
+library(sf)
 
 # from Barry on SO:
 # getRDA = function(f){e = new.env();load(f, env=e); return(e[[names(e)]])}
@@ -104,12 +111,24 @@ require(sf)
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
 ilots <- "ilots_"
 CRS <- "+init=epsg:3035"
-filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+filelist <- list.files(path=rdadir, pattern=c(ilots , "2008") , full.names = TRUE)
+# sf_ilots_2008_002 <- st_as_sf(ilots_2008_002)
+
+getRDA = function(f){e = new.env();
+  load(f, env=e); 
+  return(st_transform(basename(e), CRS))}
+  #st_transform(load(file, env=e), CRS); 
+  #return(e[[names(e)]])}
+basename(file)
 for (file in filelist){
   # getRDA = function(f){e = new.env();load(file, env=e); return(e)}
-  getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
+  f <- getRDA(file)
+#  print(paste("getRDA "), f)
 }
 
+f$
+f[1]
+filelist[3]
 
 rm(getRDA)
 getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
