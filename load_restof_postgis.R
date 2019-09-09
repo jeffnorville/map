@@ -5,6 +5,28 @@
 
 rm(list=ls())
 
+library(sf)
+CRS <- "+init=epsg:3035"
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+class(ilots_2008_002)
+sf_ilots_2008_002 <- st_as_sf(ilots_2008_002)
+class(sf_ilots_2008_002)
+
+sf_ilots_2008_002 <- st_transform(sf_ilots_2008_002, CRS)
+summary(sf_ilots_2008_002)
+class(sf_ilots_2008_002$ID_ILOT)
+sf_ilots_2008_002$ID_ILOT <- as.numeric(sf_ilots_2008_002$ID_ILOT)
+class(sf_ilots_2008_002$ID_ILOT) # that works okay
+
+
+
+
+
+s <- read_sf("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+s <- attach("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+t <- as.data.frame(ilots_2008_002)
+class(s)
+
 
 #load Picardie (002, 060, 080) (done)
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
@@ -64,6 +86,9 @@ filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
 class(filelist)
 file <- filelist[1]
 class(file)
+afile <- attach(file)
+
+
 filehand <- load(file)
 class(filehand)
 f1 <- load(file)
@@ -72,18 +97,83 @@ f2 <- st_transform(f1, CRS) # sf version
 f2 <- spTransform(f1, CRS) #sp version
 spTransform(file, CRS)
 
+
+# from Barry on SO:
+# getRDA = function(f){e = new.env();load(f, env=e); return(e[[names(e)]])}
+require(sf)
+rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+ilots <- "ilots_"
+CRS <- "+init=epsg:3035"
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+for (file in filelist){
+  # getRDA = function(f){e = new.env();load(file, env=e); return(e)}
+  getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
+}
+
+
+rm(getRDA)
+getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
+e = getRDA(file)
+e$ID_ILOT
+
+count(e$ID_ILOT)
+load(file)
+
+getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
+getRDA = function(f){e = new.env();load(file, env=e); return(e)}
+
+getRDA("x.rda")
+
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+for (file in filelist){
+  
+  afile <- attach(file)
+  print(paste("after attach "))
+  # 1. coordinates11
+#  afile <- spTransform(afile, CRS)
+  # 2. convert ID_ILOT to num from str
+  print(paste("ID_ILOT "), afile$file$ID_ILOT)
+  afile$ID_ILOT <- as.numeric(afile$ID_ILOT)
+  detach(afile)  
+}
+
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+for (file in filelist){
+  
+  afile <- readRDS(file) # nope, unknown file format
+  print(paste("after attach "))
+  # 1. coordinates11
+  #  afile <- spTransform(afile, CRS)
+  # 2. convert ID_ILOT to num from str
+  print(paste("ID_ILOT "), afile$file$ID_ILOT)
+  afile$ID_ILOT <- as.numeric(afile$ID_ILOT)
+  detach(afile)  
+}
+
+
+
+
+rm(afile)
+afile$ilots_2008_027$ID_ILOT
+
+e <- getRDA(file)
+e$ilots_2008_027
+
+files_ilots <- list.files(rdadir)
 for (file in files_ilots){
   print(paste("before load, class ", class(file)))
-  filehand <- load(file)
+  load(file)
   ## remember to rm(file) at end of looping func
   
   # 1. coordinates11
 #  filehand <- spTransform(filehand, "+init=epsg:3035")
   # 2. convert ID_ILOT to num from str
   print(summary("filehand"))
-  filehand$ID_ILOT <- as.numeric(filehand$ID_ILOT)
+  file$ID_ILOT <- as.numeric(filehand$ID_ILOT)
+}
 
-  }
+summary(file)
+
 # summary(ilots_2008_027)
 # class(ilots_2008_027$ID_ILOT)
 # ilots_2008_027$ID_ILOT <- as.numeric(ilots_2008_027$ID_ILOT)
