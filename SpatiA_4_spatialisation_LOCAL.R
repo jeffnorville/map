@@ -3,7 +3,14 @@
 # appel packages
 require(foreign)
 require(dplyr)
+require(rpostgis)
 
+# database
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'api2',
+                   host   = 'localhost',
+                   user   = 'pgisuser',
+                   password = 'mine') # pull from ini file
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
@@ -201,6 +208,24 @@ if (length(fichiers) != 0){
                     quote = FALSE,
                     sep = ":",
                     row.names = FALSE)
+        # if db then
+        pgInsert(con, 
+                 c("aropaj","temp"), 
+                 arc_simu, 
+                 geom = FALSE, 
+                 df.mode = FALSE, #true?
+                 partial.match = FALSE, 
+                 overwrite = FALSE, 
+                 new.id = NULL,
+                 row.names = FALSE, 
+                 upsert.using = NULL, 
+                 alter.names = FALSE,
+                 encoding = NULL, 
+                 return.pgi = FALSE, 
+                 df.geom = NULL,
+                 geog = FALSE)        
+        
+        
         
         print(paste(nom_arc_simu, " cree"))
         
