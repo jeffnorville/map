@@ -1,6 +1,14 @@
 .Rproj.user
+.Renviron
 .Rhistory
 .RData
+.RData*
 .Ruserdata
 .gitignore
 *.xls*
+/output/arc_simu*
+*.prj
+*.qpj
+*.shp
+*.zip
+*.mat
