@@ -39,7 +39,7 @@ chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
 #chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #off
 
 #chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
-chemin_arc_simu = paste(".", "data/arc_simu", sep = "")
+chemin_arc_simu = paste(".", "/data/arc_simu", sep = "")
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
