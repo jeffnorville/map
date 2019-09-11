@@ -102,12 +102,16 @@ load("C:/opt/donnees_R/RPG/V2/ilots_2008_073.rda")
 load("C:/opt/donnees_R/RPG/V2/ilots_2008_074.rda")
 
 
-1. convert PRA file to EPSG=32631 (EPSG:32631 - WGS 84 / UTM zone 31N - Projeté)
-1. BETTER, convert all incoming to 3035 once in postgis (faster)
+# 1. convert PRA file to EPSG=32631 (EPSG:32631 - WGS 84 / UTM zone 31N - Projeté)
+# 1. BETTER, convert all incoming to 3035 once in postgis (faster?)
 
 # CONVERSION COORDS
 ilots3035_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+class(ilots_2008_002)
+ilots3035_2008_002 <- st_transform(ilots_2008_002, "+init=epsg:3035")
 plot(ilots3035_2008_002)
+
+class(ilots_2008_002)
 
 class(pras)
 sf_pras <- st_as_sf(
@@ -126,12 +130,27 @@ sf_2008_008 <- st_as_sf(
   crs="+init=epsg:32631"
 )
 class(ilots_2008_021)
+plot(ilots_2008_021)
+
 class(sf_2008_021)
 plot(sf_2008_021)
 sf_2008_021_3035 <-  st_transform(sf_2008_021, 3035)  
 plot(sf_2008_021_3035)
 class(sf_2008_021_3035)
 
+summary(ilots_2008_021)
+
+library("rgdal")
+library("sf")
+
+ilots_2008_021_3035 <- spTransform(ilots_2008_021, "+init=epsg:3035")
+
+ilots_2008_002_3035 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+
+
+
+summary(ilots_2008_021_3035)
+plot(ilots_2008_021_3035)
 
 class(ilots_2008_002)
 
@@ -213,7 +232,7 @@ class(ilots_2008_021$ID_ILOT) #problem
 
 #### important step !!! ####
 
-# 3. BEFORE LOAD - convert ID_ILOT to num from str
+# 3. BEFORE LOADING to DB - convert ID_ILOT to num from str
 ilots_2008_002$ID_ILOT <- as.numeric(ilots_2008_002$ID_ILOT)
 ilots_2008_060$ID_ILOT <- as.numeric(ilots_2008_060$ID_ILOT)
 ilots_2008_080$ID_ILOT <- as.numeric(ilots_2008_080$ID_ILOT)

@@ -5,6 +5,34 @@
 
 rm(list=ls())
 
+#Load library
+library(raster)
+#Load shapefile
+shp <- shapefile("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+
+
+library(sf)
+CRS <- "+init=epsg:3035"
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+class(ilots_2008_002)
+sf_ilots_2008_002 <- st_as_sf(ilots_2008_002)
+class(sf_ilots_2008_002)
+
+sf_ilots_2008_002 <- st_transform(sf_ilots_2008_002, CRS)
+summary(sf_ilots_2008_002)
+class(sf_ilots_2008_002$ID_ILOT)
+sf_ilots_2008_002$ID_ILOT <- as.numeric(sf_ilots_2008_002$ID_ILOT)
+class(sf_ilots_2008_002$ID_ILOT) # that works okay
+
+
+
+
+
+s <- read_sf("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+s <- attach("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+t <- as.data.frame(ilots_2008_002)
+class(s)
+
 
 #load Picardie (002, 060, 080) (done)
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
@@ -21,38 +49,225 @@ library(rpostgis)
                     user   = 'pgisuser', #'postgres',
                     password = 'apismal2019') #'postgres'
 
-# con  <-  dbConnect("PostgreSQL",
-#                    dbname = 'apismal',
-#                    host   = 'localhost',
-#                    user   = 'postgres',
-#                    password = 'postgres')
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'apismal',
+                   host   = 'localhost',
+                   user   = 'postgres',
+                   password = 'postgres')
+
+
 
 #here begins file parsing play
 ilots <- "ilots_"
 ilotscult <- "ilotsCult_"
 rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+allfiles <- list.files(path=rdadir, full.names = TRUE)
+allfiles <- list.files(path=rdadir, full.names = FALSE)
+
 files <- list.files(path=rdadir, pattern='ilots', full.names = TRUE)
+files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+files_ilotscult <- list.files(path=rdadir, pattern=ilotscult, full.names = FALSE)
+
+##############################
+require(sp)
+require(sf)
+require(rgdal)
+require(rpostgis)
+
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'api2', #'apismal',
+                   host   = 'localhost',
+                   user   = 'pgisuser', #'postgres',
+                   password = 'apismal2019') #'postgres'
+
+rm(list=ls())
+require(sf)
+rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+ilots <- "ilots_"
+# files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+#files_ilots <- list.files(path=rdadir, pattern=ilots, full.names = FALSE)
+CRS <- "+init=epsg:3035"
+
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+class(filelist)
+file <- filelist[1]
+class(file)
+afile <- attach(file)
+
+
+filehand <- load(file)
+class(filehand)
+f1 <- load(file)
+class(f1)
+f2 <- st_transform(f1, CRS) # sf version
+f2 <- spTransform(f1, CRS) #sp version
+spTransform(file, CRS)
+
+library(sf)
+
+# from Barry on SO:
+# getRDA = function(f){e = new.env();load(f, env=e); return(e[[names(e)]])}
+require(sf)
+rdadir <- "C:/opt/donnees_R/RPG/V2/HAUTE-NORMANDIE"
+ilots <- "ilots_"
+CRS <- "+init=epsg:3035"
+filelist <- list.files(path=rdadir, pattern=c(ilots , "2008") , full.names = TRUE)
+# sf_ilots_2008_002 <- st_as_sf(ilots_2008_002)
+
+getRDA = function(f){e = new.env();
+  load(f, env=e); 
+  return(st_transform(basename(e), CRS))}
+  #st_transform(load(file, env=e), CRS); 
+  #return(e[[names(e)]])}
+basename(file)
+for (file in filelist){
+  # getRDA = function(f){e = new.env();load(file, env=e); return(e)}
+  f <- getRDA(file)
+#  print(paste("getRDA "), f)
+}
+
+f$
+f[1]
+filelist[3]
+
+rm(getRDA)
+getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
+e = getRDA(file)
+e$ID_ILOT
+
+count(e$ID_ILOT)
+load(file)
+
+getRDA = function(f){e = new.env();load(file, env=e); return(e[[names(e)]])}
+getRDA = function(f){e = new.env();load(file, env=e); return(e)}
+
+getRDA("x.rda")
+
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+for (file in filelist){
+  
+  afile <- attach(file)
+  print(paste("after attach "))
+  # 1. coordinates11
+#  afile <- spTransform(afile, CRS)
+  # 2. convert ID_ILOT to num from str
+  print(paste("ID_ILOT "), afile$file$ID_ILOT)
+  afile$ID_ILOT <- as.numeric(afile$ID_ILOT)
+  detach(afile)  
+}
+
+filelist <- list.files(path=rdadir, pattern=ilots, full.names = TRUE)
+for (file in filelist){
+  
+  afile <- readRDS(file) # nope, unknown file format
+  print(paste("after attach "))
+  # 1. coordinates11
+  #  afile <- spTransform(afile, CRS)
+  # 2. convert ID_ILOT to num from str
+  print(paste("ID_ILOT "), afile$file$ID_ILOT)
+  afile$ID_ILOT <- as.numeric(afile$ID_ILOT)
+  detach(afile)  
+}
+
+
+
+
+rm(afile)
+afile$ilots_2008_027$ID_ILOT
+
+e <- getRDA(file)
+e$ilots_2008_027
+
+files_ilots <- list.files(rdadir)
+for (file in files_ilots){
+  print(paste("before load, class ", class(file)))
+  load(file)
+  ## remember to rm(file) at end of looping func
+  
+  # 1. coordinates11
+#  filehand <- spTransform(filehand, "+init=epsg:3035")
+  # 2. convert ID_ILOT to num from str
+  print(summary("filehand"))
+  file$ID_ILOT <- as.numeric(filehand$ID_ILOT)
+}
+
+summary(file)
+
+# summary(ilots_2008_027)
+# class(ilots_2008_027$ID_ILOT)
+# ilots_2008_027$ID_ILOT <- as.numeric(ilots_2008_027$ID_ILOT)
+# class(ilots_2008_027$ID_ILOT)
+# 
+# typeof(ilots_2008_076$ID_ILOT)
+
+for (file in files_ilots){
+  # file <- tools::file_path_sans_ext(file) #get object, not filepath which is a char
+  file <- load(file)
+  ## remember to rm(file) at end of looping func
+  
+  # 1. coordinates11
+  file <- spTransform(file, CRS)
+  # 2. convert ID_ILOT to num from str
+  file$ID_ILOT <- as.numeric(file$ID_ILOT)
+  
+  rm(file)
+  rm(fileobj)
+}  
+  #spTransform fails sept 5
+  
+  # 3. load by pgInsert
+  pgInsert(con, 
+           c("test","ilots"), #public -- FOR TESTing
+           file, #ex ilots_2008_082
+           geom = "geom", 
+           df.mode = FALSE,
+           partial.match = FALSE, 
+           overwrite = FALSE, 
+           new.id = NULL,
+           row.names = FALSE, 
+           upsert.using = NULL, 
+           alter.names = FALSE,
+           encoding = NULL, 
+           return.pgi = FALSE, 
+           df.geom = NULL,
+           geog = FALSE)
+  
+  rm(file)
+  fprint(subname)
+  
+}
+
+##############################
+
+
 
 # need to seperate ilot from ilotcult files after loading, here are things to try
+# easier to seperate them during load I think
  file <- files[3]
-
+ list <- strsplit(file, "/")
+ # rm(list)
+ filename <- list[[1]][7]
+ 
+ 
+ 
  txt <- c("arm","foot","lefroo", "bafoobar")
  if(length(i <- grep("foo", txt)))
    cat("'foo' appears at least once in\n\t", txt, "\n")
  i # 2 and 4
  txt[i]
 
- which()
+# find files by keyword 2010 in list of ilots_files: 
+y2010_fi <- grep("2010", files_ilots)
+# here they are
+files_ilots[y2010_fi] 
+ 
+# which()
  TRUE %in% (list.files() == 'nameoffile.csv') 
 
 name <- files[2]
 # subname <- sub(ilots, ilotscult, file)
-if grepl(ilotscult, file)
-  print("cult")  
-else if grepl(ilots, file)
-  print("ilots only ")
-end if
 
+# https://stackoverflow.com/questions/20144890/sorting-files-into-folders-by-file-name-in-r
 
 for (file in files){
   name <- file
