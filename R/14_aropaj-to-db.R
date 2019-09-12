@@ -31,17 +31,17 @@ con  <-  dbConnect("PostgreSQL",
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
-#chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
+chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
+#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+#chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-#chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
-chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
+chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+#chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
 
 #only used to output files
 ##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
@@ -248,7 +248,7 @@ if (length(fichiers) != 0){
         nom_arc_simu = paste("Arc", nom_arc_simu, ".region", region, ".csv", sep = "")
         #substr just simulation series out
         simulation_seq <- substr(fichier, nchar(fichier)-7, nchar(fichier)-6)
-        simulation_seq <- gsub("\\.", "", simulation_seq)
+        simulation_seq <- as.numeric(gsub("\\.", "", simulation_seq))
         #cut out to focus on db
         # write.table(arc_simu,
         #             file = paste(chemin_arc_simu, nom_arc_simu, sep = "/"),
