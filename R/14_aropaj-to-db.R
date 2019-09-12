@@ -47,6 +47,7 @@ chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES
 ##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
 #chemin_arc_simu = paste(".", "/data/arc_simu", sep = "")
 
+
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
 # colonne 7 : margbrut et 175 : consengrais par exemple
@@ -76,32 +77,39 @@ test = as.numeric(test)
 indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
-# on charge chaque fichier de la liste dans GT
-for (nom_gt in liste_fichier_GT){
+# add test: if these are loaded already, skip it?
+if (!exists(liste_fichier_GT)) {
+  # on charge chaque fichier de la liste dans GT
+  for (nom_gt in liste_fichier_GT){
+    
+    # chargement
+    GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
+    
+    # consider adding REGION
+    # V5 : ajouter la colonne COUNT qui est dans le shapefile
+    reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
+    shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
+    GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
+    
+    # on les transforme directement en matrice pour gagner du temps
+    # on transforme GT en matrice en ne gardant que l'info sur les probas des GT
+    # i.e de (COUNT + 1) ? (NAU - 1)
+    #  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][,(which(names(GT[[nom_gt]]) == "COUNT") + 1):
+    #                      (which(names(GT[[nom_gt]]) == "NAU") - 1) ])
+    #  class(GT.matrix[[nom_gt]]) = "numeric"
+    GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
+    class(GT.matrix[[nom_gt]]) = "numeric"
+    
+    #on ne garde que GC et COUNT sur la version data frame
+    #jn sept 2019 adding simulation sequence back in ...? doubting 
+    # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT", "SIM")]
+    GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
+    
+    print(paste("chargement de", nom_gt))
+  }
   
-  # chargement
-  GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-  
-  # consider adding REGION
-  # V5 : ajouter la colonne COUNT qui est dans le shapefile
-  reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
-  shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
-  GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
-  
-  # on les transforme directement en matrice pour gagner du temps
-  # on transforme GT en matrice en ne gardant que l'info sur les probas des GT
-  # i.e de (COUNT + 1) ? (NAU - 1)
-  #  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][,(which(names(GT[[nom_gt]]) == "COUNT") + 1):
-  #                      (which(names(GT[[nom_gt]]) == "NAU") - 1) ])
-  #  class(GT.matrix[[nom_gt]]) = "numeric"
-  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
-  class(GT.matrix[[nom_gt]]) = "numeric"
-  
-  #on ne garde que GC et COUNT sur la version data frame
-  GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
-  
-  print(paste("chargement de", nom_gt))
 }
+
 
 # on met des names de GT correspondant au fichier lu
 names(GT) = as.vector(sapply(names(GT), function(x) strsplit(strsplit(x, "Gt")[[1]][2], "[.]dbf")[[1]][[1]]))
@@ -124,10 +132,21 @@ fichiers = list.files(path = chemin_table_compil,
 fichiers = fichiers[which(grepl(".txt", fichiers))]
 
 # TODO get the unique name of this aropaj run from filename
-aropajsimname <- fichiers[1]
+aropajsimname <- fichiers[1] #take it from first file
 aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
 
+
+#TODO check if table exists, overwrite if so
 # if dbexiststable(con, paste(aropaj, aropajsimname)
+#dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
+dbDrop(con,
+       name = c("aropaj", aropajsimname),
+       type = "table",
+       ifexists = TRUE, #Do not throw an error if the object does not exist. A notice is issued in this case
+       exec = TRUE)
+
+
+
 
 # on prend pas norvege suede etc - suupri / inutile
 #test = sapply(fichiers, function (x) strsplit(x, "[.]txt")[[1]][1])
@@ -191,6 +210,7 @@ if (length(fichiers) != 0){
     # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
     # }
     
+    #NB unit change here
     # on met tout en par hectare en divisant par surf_tot !!!
     table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/table_compil$surf_tot
     
@@ -226,6 +246,9 @@ if (length(fichiers) != 0){
         nom_arc_simu = strsplit(fichier, split = "compil")[[1]][2]
         nom_arc_simu = strsplit(nom_arc_simu, split = "[.]txt")[[1]][1]
         nom_arc_simu = paste("Arc", nom_arc_simu, ".region", region, ".csv", sep = "")
+        #substr just simulation series out
+        simulation_seq <- substr(fichier, nchar(fichier)-7, nchar(fichier)-6)
+        simulation_seq <- gsub("\\.", "", simulation_seq)
         #cut out to focus on db
         # write.table(arc_simu,
         #             file = paste(chemin_arc_simu, nom_arc_simu, sep = "/"),
@@ -235,15 +258,12 @@ if (length(fichiers) != 0){
         # print(paste(nom_arc_simu, " cree"))
         
         # if db then
-        #TODO check if table exists, overwrite if so
-        #dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
-        dbDrop(con,
-              name = c("aropaj", aropajsimname),
-              type = "table",
-              ifexists = TRUE, #Do not throw an error if the object does not exist. A notice is issued in this case
-              exec = TRUE)
-
+        # need gridcode AND region AND simulsequence for db
         arc_simu$region <- region
+        #head(arc_simu)
+        #TODO need to add column w realisation sequence
+        arc_simu$simul <- simulation_seq
+        
         pgInsert(con, 
                  c("aropaj",aropajsimname), 
                  arc_simu, 
