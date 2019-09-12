@@ -11,37 +11,41 @@ wd$output <- "C:/Users/Jeff Norville/Documents/R/map/output/"
 # appel packages
 require(foreign)
 require(dplyr)
+#motivation over sf and rpostgres etc https://journal.r-project.org/archive/2018/RJ-2018-025/RJ-2018-025.pdf
 require(rpostgis)
 
-username <- Sys.getenv("user")
-password <- Sys.getenv("passwd")
+#nb - rstudio picks up from .renviron file at launch of program - variable cannot be redefined w/o relaunch (or at least reload) of .renviron file
+#point of this is to keep passwords, etc, unique to local instance of program (and off of source control evidently)
+gethost     <- Sys.getenv("dbhost")
+getdbname <- Sys.getenv("dbname")
+getusername <- Sys.getenv("user")
+getpassword <- Sys.getenv("passwd")
 
 # database
 con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal',
-                   host   = 'localhost',
-                   user   = username,
-                   password = password) # pull from ini file
-# isPostgresqlIdCurrent(con) #boolean
+                   dbname = getdbname,
+                   host   = gethost,
+                   user   = getusername,
+                   password = getpassword)
+# isPostgresqlIdCurrent(con) #boolean, checks if postgres instance is alive
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
+#chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
 
-#chemin_GT = paste(get.pc.folder(),"SPATIAL_GT/", sep = "")
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-#chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #off
-
+#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
-#chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #off
+#chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
 
-#chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
-chemin_arc_simu = paste(".", "/data/arc_simu", sep = "")
+#only used to output files
+##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
+#chemin_arc_simu = paste(".", "/data/arc_simu", sep = "")
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
@@ -118,6 +122,12 @@ names(GT.matrix) = names(GT)
 fichiers = list.files(path = chemin_table_compil,
                       pattern = "table.compil")
 fichiers = fichiers[which(grepl(".txt", fichiers))]
+
+# TODO get the unique name of this aropaj run from filename
+aropajsimname <- fichiers[1]
+aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
+
+# if dbexiststable(con, paste(aropaj, aropajsimname)
 
 # on prend pas norvege suede etc - suupri / inutile
 #test = sapply(fichiers, function (x) strsplit(x, "[.]txt")[[1]][1])
@@ -225,10 +235,17 @@ if (length(fichiers) != 0){
         # print(paste(nom_arc_simu, " cree"))
         
         # if db then
-        #TODO have to add REGION to dataframe
+        #TODO check if table exists, overwrite if so
+        #dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
+        dbDrop(con,
+              name = c("aropaj", aropajsimname),
+              type = "table",
+              ifexists = TRUE, #Do not throw an error if the object does not exist. A notice is issued in this case
+              exec = TRUE)
+
         arc_simu$region <- region
         pgInsert(con, 
-                 c("aropaj","temp2"), 
+                 c("aropaj",aropajsimname), 
                  arc_simu, 
                  geom = FALSE, 
                  df.mode = FALSE, #was FALSE
