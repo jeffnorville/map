@@ -79,7 +79,7 @@ indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
 # add test: if these are loaded already, skip it?
-if (!exists(liste_fichier_GT)) {
+#if (!exists(liste_fichier_GT)) {
   # on charge chaque fichier de la liste dans GT
   for (nom_gt in liste_fichier_GT){
     
@@ -109,7 +109,7 @@ if (!exists(liste_fichier_GT)) {
     print(paste("chargement de", nom_gt))
   }
   
-}
+#}
 
 
 # on met des names de GT correspondant au fichier lu
@@ -192,24 +192,25 @@ if (length(fichiers) != 0){
   # dans ce cas on commence une boucle sur chaque fichier
   for(fichier in fichiers){
     
-    print(paste("traitement de", fichier))
+    print(paste("traitement de ", fichier))
     
     # on charge le fichier, cad le table compil e spatialiser
     table_compil = read.table(file = paste(chemin_table_compil, fichier, sep = ""), 
                               sep = ":",
+                              skip = 1, #new JN, solves 'more columnes than columnames' err
                               strip.white = TRUE,
                               header = TRUE,
                               fill = TRUE)
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
-    # if (fichier == fichiers[1]){
-    # var = names(table_compil)[liste_colonnes_a_garder]
-    # for (i in 1:length(var)){
-    # var[i] = paste(i, "=", var[i], sep = "")
-    # }
-    # 
-    # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
-    # }
+    #uncommented for debugging help JN
+     if (fichier == fichiers[1]){
+     var = names(table_compil)[liste_colonnes_a_garder]
+     for (i in 1:length(var)){
+       var[i] = paste(i, "=", var[i], sep = "")
+       }
+     write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
+     }
     
     #NB unit change here
     # on met tout en par hectare en divisant par surf_tot !!!
