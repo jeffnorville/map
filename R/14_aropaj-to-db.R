@@ -204,13 +204,13 @@ if (length(fichiers) != 0){
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
     #uncommented for debugging help JN
-     if (fichier == fichiers[1]){
-     var = names(table_compil)[liste_colonnes_a_garder]
-     for (i in 1:length(var)){
-       var[i] = paste(i, "=", var[i], sep = "")
-       }
-     write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
-     }
+     # if (fichier == fichiers[1]){
+     # var = names(table_compil)[liste_colonnes_a_garder]
+     # for (i in 1:length(var)){
+     #   var[i] = paste(i, "=", var[i], sep = "")
+     #   }
+     # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
+     # }
     
     #NB unit change here
     # on met tout en par hectare en divisant par surf_tot !!!
