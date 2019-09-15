@@ -31,7 +31,7 @@ con  <-  dbConnect("PostgreSQL",
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_avril/", sep = "") #leno
+chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
 
