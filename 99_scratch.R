@@ -32,11 +32,11 @@ con  <-  dbConnect("PostgreSQL",
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
 chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT_scratch/", sep = "") #leno
 #chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
@@ -79,7 +79,7 @@ indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
 # add test: if these are loaded already, skip it?
-#if (!exists(liste_fichier_GT)) {
+if (!exists(liste_fichier_GT)) {
   # on charge chaque fichier de la liste dans GT
   for (nom_gt in liste_fichier_GT){
     
@@ -109,7 +109,7 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
     print(paste("chargement de", nom_gt))
   }
   
-#}
+}
 
 
 # on met des names de GT correspondant au fichier lu
@@ -192,24 +192,24 @@ if (length(fichiers) != 0){
   # dans ce cas on commence une boucle sur chaque fichier
   for(fichier in fichiers){
     
-    print(paste("traitement de ", fichier))
+    print(paste("traitement de", fichier))
     
     # on charge le fichier, cad le table compil e spatialiser
     table_compil = read.table(file = paste(chemin_table_compil, fichier, sep = ""), 
                               sep = ":",
-                              skip = 1, #new JN, solves 'more columnes than columnames' err
                               strip.white = TRUE,
                               header = TRUE,
                               fill = TRUE)
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
-     # if (fichier == fichiers[1]){
-     # var = names(table_compil)[liste_colonnes_a_garder]
-     # for (i in 1:length(var)){
-     #   var[i] = paste(i, "=", var[i], sep = "")
-     #   }
-     # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
-     # }
+    # if (fichier == fichiers[1]){
+    # var = names(table_compil)[liste_colonnes_a_garder]
+    # for (i in 1:length(var)){
+    # var[i] = paste(i, "=", var[i], sep = "")
+    # }
+    # 
+    # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
+    # }
     
     #NB unit change here
     # on met tout en par hectare en divisant par surf_tot !!!
@@ -253,7 +253,7 @@ if (length(fichiers) != 0){
         simulation_seq <- gsub("\\.", "", simulation_seq)
         print(paste("debug: file ", fichier, ", seq ", simulation_seq, " blah"))
         simulation_seq <- as.numeric(gsub("\\.", "", simulation_seq))
-        # print(paste("debug:  seq as.numeric ", simulation_seq))
+        print(paste("debug:  seq as.numeric ", simulation_seq))
         
         #cut out to focus on db
         # write.table(arc_simu,
@@ -267,7 +267,7 @@ if (length(fichiers) != 0){
         # need gridcode AND region AND simulsequence for db
         arc_simu$region <- region
         #head(arc_simu)
-        # add column w realisation sequence
+        #TODO need to add column w realisation sequence
         arc_simu$simul <- simulation_seq
         
         pgInsert(con, 
