@@ -280,7 +280,7 @@ if (length(fichiers) != 0){
                  df.geom = NULL,
                  geog = FALSE)        
         
-        print(paste("reg ", region, " added to db"))
+        print(paste("reg ", region, ", seq ", simulation_seq, " added to db"))
         
       } # fin teste si GT present
     } #fin boucle sur les regions
