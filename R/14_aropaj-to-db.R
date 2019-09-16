@@ -31,18 +31,19 @@ con  <-  dbConnect("PostgreSQL",
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
+#chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load1/", sep = "") #off
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-#chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
-#chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
+# chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
 
 #only used to output files
 ##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
@@ -111,11 +112,10 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
   
 #}
 
-
+print("before names(GT)")
 # on met des names de GT correspondant au fichier lu
 names(GT) = as.vector(sapply(names(GT), function(x) strsplit(strsplit(x, "Gt")[[1]][2], "[.]dbf")[[1]][[1]]))
 names(GT.matrix) = names(GT)
-
 
 # lister les fichiers Ã  traiter -------------------------------------------
 
@@ -126,7 +126,7 @@ names(GT.matrix) = names(GT)
 #setwd(chemin_table_compil)
 
 # picking up aropaj outfiles for DB
-# consider aropaj.[tablename] - 
+
 # on liste les fichiers table compil de type txt
 fichiers = list.files(path = chemin_table_compil,
                       pattern = "table.compil")
@@ -147,13 +147,10 @@ dbDrop(con,
        exec = TRUE)
 
 
-
-
 # on prend pas norvege suede etc - suupri / inutile
 #test = sapply(fichiers, function (x) strsplit(x, "[.]txt")[[1]][1])
 #test = as.numeric(sapply(test,  function (x) strsplit(x, "[.]1[.]")[[1]][2]))
 #fichiers = fichiers[which(test < 93)]
-
 
 # creation d'une fonction de spatialisation -------------------------------
 # chargee de faire le gros du boulot : un produit matriciel
@@ -193,6 +190,7 @@ if (length(fichiers) != 0){
   for(fichier in fichiers){
     
     print(paste("traitement de ", fichier))
+    print(paste("liste_colonnes_a_garder ", liste_colonnes_a_garder))
     
     # on charge le fichier, cad le table compil e spatialiser
     table_compil = read.table(file = paste(chemin_table_compil, fichier, sep = ""), 
@@ -213,7 +211,7 @@ if (length(fichiers) != 0){
     
     #NB unit change here
     # on met tout en par hectare en divisant par surf_tot !!!
-    table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/table_compil$surf_tot
+    table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
     
     # on en extrait la sous-partie que l'utilisateur nous a demande de garder
     # ainsi que reg dont on aura besoin
@@ -250,9 +248,8 @@ if (length(fichiers) != 0){
         
         #substr just simulation series out
         simulation_seq <- substr(fichier, nchar(fichier)-7, nchar(fichier)-6)
-        simulation_seq <- gsub("\\.", "", simulation_seq)
-        print(paste("debug: file ", fichier, ", seq ", simulation_seq, " blah"))
         simulation_seq <- as.numeric(gsub("\\.", "", simulation_seq))
+        print(paste("debug: file ", fichier, ", seq ", simulation_seq, " blah"))
         # print(paste("debug:  seq as.numeric ", simulation_seq))
         
         #cut out to focus on db
