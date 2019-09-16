@@ -203,7 +203,6 @@ if (length(fichiers) != 0){
                               fill = TRUE)
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
-    #uncommented for debugging help JN
      # if (fichier == fichiers[1]){
      # var = names(table_compil)[liste_colonnes_a_garder]
      # for (i in 1:length(var)){
@@ -254,7 +253,7 @@ if (length(fichiers) != 0){
         simulation_seq <- gsub("\\.", "", simulation_seq)
         print(paste("debug: file ", fichier, ", seq ", simulation_seq, " blah"))
         simulation_seq <- as.numeric(gsub("\\.", "", simulation_seq))
-        print(paste("debug:  seq as.numeric ", simulation_seq))
+        # print(paste("debug:  seq as.numeric ", simulation_seq))
         
         #cut out to focus on db
         # write.table(arc_simu,
@@ -268,7 +267,7 @@ if (length(fichiers) != 0){
         # need gridcode AND region AND simulsequence for db
         arc_simu$region <- region
         #head(arc_simu)
-        #TODO need to add column w realisation sequence
+        # add column w realisation sequence
         arc_simu$simul <- simulation_seq
         
         pgInsert(con, 
