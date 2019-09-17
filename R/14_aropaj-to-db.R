@@ -33,8 +33,8 @@ con  <-  dbConnect("PostgreSQL",
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
 #chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off
-chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load1/", sep = "") #off
+#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off, load1 = surfperm
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load2/", sep = "") #off, load2 = margbrut
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
 #chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
@@ -56,6 +56,8 @@ chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES
 liste_colonnes_a_garder = c(32)
 # On decale de 6 pour coller avec la liste des variables a traiter
 liste_colonnes_a_garder = liste_colonnes_a_garder + 6
+
+liste_colonnes_a_garder <- 7 #forcing margbrut
 
 #liste_colonnes_a_garder = c(7:50, 100:118, 148:150, 172:175)
 # ecriture d'un petit fichier dans arc_simu pour onserver la liste des variables
@@ -135,7 +137,10 @@ fichiers = fichiers[which(grepl(".txt", fichiers))]
 # TODO get the unique name of this aropaj run from filename
 aropajsimname <- fichiers[1] #take it from first file
 aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
+#filename too long for postgresql, strip the first 28 bytes:
+aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
 
+# names(table_compil[1])
 
 #TODO check if table exists, overwrite if so
 # if dbexiststable(con, paste(aropaj, aropajsimname)
