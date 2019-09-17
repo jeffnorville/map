@@ -36,6 +36,7 @@ con  <-  dbConnect("PostgreSQL",
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off, load1 = surfperm
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load2/", sep = "") #off, load2 = margbrut
 chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfbled/", sep = "") #office
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfcolz/", sep = "") #office
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
 #chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
@@ -59,7 +60,9 @@ liste_colonnes_a_garder = c(32)
 liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 
 # liste_colonnes_a_garder <- 7 #forcing margbrut
-liste_colonnes_a_garder <- 8 #forcing surfbled
+# liste_colonnes_a_garder <- 8 #forcing surfbled
+liste_colonnes_a_garder <- 39 # surfaufo
+liste_colonnes_a_garder <- 21 # surfcolz
 
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
 # [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
