@@ -34,7 +34,8 @@ con  <-  dbConnect("PostgreSQL",
 #chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off, load1 = surfperm
-chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load2/", sep = "") #off, load2 = margbrut
+#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load2/", sep = "") #off, load2 = margbrut
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfbled/", sep = "") #office
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
 #chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
@@ -57,7 +58,39 @@ liste_colonnes_a_garder = c(32)
 # On decale de 6 pour coller avec la liste des variables a traiter
 liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 
-liste_colonnes_a_garder <- 7 #forcing margbrut
+# liste_colonnes_a_garder <- 7 #forcing margbrut
+liste_colonnes_a_garder <- 8 #forcing surfbled
+
+# [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
+# [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
+# [17] "surfbett" "surftaba" "surfcoto" "surflinc" "surfcolz" "surftour" "surfsoja" "surfprot"
+# [25] "surffeve" "surflgsv" "surffric" "surfgelv" "gelms2pr" "gelms2np" "foretjac" "surfpdtr"
+# [33] "surflegf" "surfbtfo" "surfmafo" "surfluze" "surffpro" "surfperm" "surfaufo" "surfxxxx"
+# [41] "surfener" "intrabld" "intrablt" "intraogh" "intraogp" "intraavo" "intraauc" "intrasei"
+# [49] "intraxxx" "intramai" "alimache" "alimaghe" "alimacpc" "alimagpc" "alimacvo" "alimagvo"
+# [57] "alimactt" "alimagtt" "animvbbt" "animvbbe" "animve2m" "animvmgr" "animvedt" "animvedb"
+# [65] "animfnrl" "animfnrv" "animfare" "animveat" "animveab" "animvfal" "animvfav" "animtaie"
+# [73] "animtaac" "animm1eb" "animm1ab" "animf1el" "animf1ev" "animf1al" "animf1av" "animbeie"
+# [81] "animbeac" "animgnlv" "animgnvv" "animvlai" "animvnou" "animovin" "animcapr" "animporc"
+# [89] "animvola" "pbrutani" "effecugb" "depalima" "feogahrs" "depaACHE" "depaACPC" "depaACVL"
+# [97] "depaAGHE" "depaAGPC" "depaAGVL" "collbled" "collblet" "collorgh" "collorgp" "collavoi"
+# [105] "collauce" "collseig" "collriz"  "collmais" "collcolz" "colltour" "collbetC" "collbett"
+# [113] "collpdtr" "collsoja" "collprot" "collfeve" "colllgsv" "colllait" "dualqola" "emiss01C"
+# [121] "emiss02C" "emiss03C" "emiss04C" "emiss04S" "emiss05C" "emiss06C" "emiss07C" "emiss07S"
+# [129] "emiss07T" "emiss08C" "emiss09C" "emiss10C" "emiss10S" "emiss11C" "emiss12C" "emiss13C"
+# [137] "emiss14C" "emiss14T" "emiss15C" "emiss16C" "emiss17C" "emiss17S" "emiss18C" "emiss19C"
+# [145] "emiss20C" "emiss21C" "emiss21T" "emissN2O" "emissCH4" "emiss22T" "emissCAR" "emiss23T"
+# [153] "dualterr" "varbidon" "bfeoga02" "bfeoga03" "bfeoga04" "bfeoga05" "bfeoga06" "bfeoga07"
+# [161] "bfeoga08" "bfeoga09" "bfeoga10" "bfeoga11" "bfeoga12" "bfeoga13" "bfeoga14" "bfeoga15"
+# [169] "bfeoga16" "bfeoga17" "bfeoga18" "soldfeog" "surfgl49" "emipoN2O" "emipoNO3" "emipoNH3"
+# [177] "consengr" "surfmisc" "surfswit" "surfeuca" "surfrobi" "surfpeup" "surfsaul" "collmisc"
+# [185] "collswit" "colleuca" "collrobi" "collpeup" "collsaul" "collluze" "collcobl" "collcobd"
+# [193] "collcooh" "collcoav" "collcoca" "collcose" "collcoma" "collcocz" "collcotr" "collcosj"
+# [201] "ecaMINCL" "duaMINCL" "ecaMINYC" "duaMINYC" "ecaMAXCN" "duaMAXCN" "ecaMAXQG" "duaMAXQG"
+# [209] "X.2"      "X.3"      "Reg"      "n_Reg"    "Pay"      "n_Pay"    "n_UE"     "C2"      
+# [217] "C1"       "id_typo"  "pay_aro"  "n_UE.1"   "X.4"      "popul"    "X.5"      "sauto" 
+
+
 
 #liste_colonnes_a_garder = c(7:50, 100:118, 148:150, 172:175)
 # ecriture d'un petit fichier dans arc_simu pour onserver la liste des variables
