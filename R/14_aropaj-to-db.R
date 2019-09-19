@@ -31,11 +31,13 @@ con  <-  dbConnect("PostgreSQL",
 # pgPostGIS(con) #check that postgis is installed in db
 
 
+
 # tbls_aropaj <- dbListTables(con, "SELECT * FROM information_schema.tables
 #                    WHERE table_schema='aropaj'")
 # 
-# tbls_aropaj <- dbListTables(con, "SELECT * FROM information_schema.tables")
-
+select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
+tbls_aropaj <- dbGetQuery(con, select_gtlist)
+# tbls_aropaj$table_name
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
