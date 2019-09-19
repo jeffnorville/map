@@ -37,7 +37,7 @@ con  <-  dbConnect("PostgreSQL",
 # 
 select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
 tbls_aropaj <- dbGetQuery(con, select_gtlist)
-# tbls_aropaj$table_name
+#tbls_aropaj$table_name
 
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
@@ -49,8 +49,8 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_surfauce/", sep = "") #leno
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-# chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+ chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
@@ -121,7 +121,7 @@ GT.matrix = list()
 liste_fichier_GT = list.files(path = chemin_GT,
                               pattern = paste("Gt", sep = ""))
 
-liste_dbobjects_GT <- dbReadDataFrame(con, name = "Gt")
+liste_db_GT <- tbls_aropaj$table_name
 
 # ATTENTION : dans liste_fichier_GT : se limiter a ceux du CSHELL
 test = sapply(liste_fichier_GT, function(x) strsplit(x, "Gt")[[1]][2])
