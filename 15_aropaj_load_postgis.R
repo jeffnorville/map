@@ -130,35 +130,35 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
 # add test: if these are loaded already, skip it?
 #if (!exists(liste_fichier_GT)) {
-  # on charge chaque fichier de la liste dans GT
-  for (nom_gt in liste_fichier_GT){
-    
-    # chargement
-    GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-    
-    # consider adding REGION
-    # V5 : ajouter la colonne COUNT qui est dans le shapefile
-    reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
-    shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
-    GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
-    
-    # on les transforme directement en matrice pour gagner du temps
-    # on transforme GT en matrice en ne gardant que l'info sur les probas des GT
-    # i.e de (COUNT + 1) ? (NAU - 1)
-    #  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][,(which(names(GT[[nom_gt]]) == "COUNT") + 1):
-    #                      (which(names(GT[[nom_gt]]) == "NAU") - 1) ])
-    #  class(GT.matrix[[nom_gt]]) = "numeric"
-    GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
-    class(GT.matrix[[nom_gt]]) = "numeric"
-    
-    #on ne garde que GC et COUNT sur la version data frame
-    #jn sept 2019 adding simulation sequence back in ...? doubting 
-    # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT", "SIM")]
-    GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
-    
-    print(paste("chargement de", nom_gt))
-  }
+# on charge chaque fichier de la liste dans GT
+for (nom_gt in liste_fichier_GT){
   
+  # chargement
+  GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
+  
+  # consider adding REGION
+  # V5 : ajouter la colonne COUNT qui est dans le shapefile
+  reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
+  shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
+  GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
+  
+  # on les transforme directement en matrice pour gagner du temps
+  # on transforme GT en matrice en ne gardant que l'info sur les probas des GT
+  # i.e de (COUNT + 1) ? (NAU - 1)
+  #  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][,(which(names(GT[[nom_gt]]) == "COUNT") + 1):
+  #                      (which(names(GT[[nom_gt]]) == "NAU") - 1) ])
+  #  class(GT.matrix[[nom_gt]]) = "numeric"
+  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
+  class(GT.matrix[[nom_gt]]) = "numeric"
+  
+  #on ne garde que GC et COUNT sur la version data frame
+  #jn sept 2019 adding simulation sequence back in ...? doubting 
+  # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT", "SIM")]
+  GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
+  
+  print(paste("chargement de", nom_gt))
+}
+
 #}
 
 print("before names(GT)")
@@ -247,13 +247,13 @@ if (length(fichiers) != 0){
                               fill = TRUE)
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
-     # if (fichier == fichiers[1]){
-     # var = names(table_compil)[liste_colonnes_a_garder]
-     # for (i in 1:length(var)){
-     #   var[i] = paste(i, "=", var[i], sep = "")
-     #   }
-     # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
-     # }
+    # if (fichier == fichiers[1]){
+    # var = names(table_compil)[liste_colonnes_a_garder]
+    # for (i in 1:length(var)){
+    #   var[i] = paste(i, "=", var[i], sep = "")
+    #   }
+    # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
+    # }
     
     #NB unit change here
     # on met tout en par hectare en divisant par surf_tot !!!
