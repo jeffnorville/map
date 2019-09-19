@@ -30,11 +30,7 @@ con  <-  dbConnect("PostgreSQL",
 # isPostgresqlIdCurrent(con) #boolean, checks if postgres instance is alive
 # pgPostGIS(con) #check that postgis is installed in db
 
-
-
-# tbls_aropaj <- dbListTables(con, "SELECT * FROM information_schema.tables
-#                    WHERE table_schema='aropaj'")
-# 
+# define queries
 select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
 tbls_aropaj <- dbGetQuery(con, select_gtlist)
 #tbls_aropaj$table_name
