@@ -42,11 +42,12 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 #chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load2/", sep = "") #off, load2 = margbrut
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfbled/", sep = "") #office
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfcolz/", sep = "") #office
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_surfauce/", sep = "") #leno
+# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_surfauce/", sep = "") #leno
+chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-#chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
- chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+ # chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
@@ -61,15 +62,19 @@ chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
 # colonne 7 : margbrut et 175 : consengrais par exemple
-liste_colonnes_a_garder = c(32)
 # On decale de 6 pour coller avec la liste des variables a traiter
+liste_colonnes_a_garder = c(32)
 liste_colonnes_a_garder = liste_colonnes_a_garder + 6
+# liste_colonnes_a_garder = c(32)
 
 # liste_colonnes_a_garder <- 7 #forcing margbrut
 # liste_colonnes_a_garder <- 8 #forcing surfbled
+# liste_colonnes_a_garder <- 38 #forcing surfperm
 # liste_colonnes_a_garder <- 39 # surfaufo
 # liste_colonnes_a_garder <- 21 # surfcolz
-liste_colonnes_a_garder <- 13 #surfauce
+# liste_colonnes_a_garder <- 13 #surfauce
+liste_colonnes_a_garder <- 201 #surfafsh
+
 
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
 # [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
@@ -127,14 +132,30 @@ indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
 # add test: if these are loaded already, skip it?
-#if (!exists(liste_fichier_GT)) {
+#if (!exists(liste_fichier_GT)) {}
+
+#let's load this from same postgresql con instead of filesystem !
+  for (gtid in liste_db_GT){
+
+    # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
+    # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
+    # shp <- read.table()
+    # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
+    # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
+    # class(GT.matrix[[nom_gt]]) = "numeric"
+    # #on ne garde que GC et COUNT sur la version data frame
+    # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
+    print(paste("loaded db ", gtid))
+    
+    
+  }
+
   # on charge chaque fichier de la liste dans GT
   for (nom_gt in liste_fichier_GT){
     
     # chargement
     GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
     
-    # consider adding REGION
     # V5 : ajouter la colonne COUNT qui est dans le shapefile
     reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
     shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
@@ -178,23 +199,19 @@ aropajsimname <- fichiers[1] #take it from first file
 aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
 #filename too long for postgresql, strip the first 28 bytes:
 aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
+aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
 
 # names(table_compil[1])
+#surfafsh
 
 #TODO check if table exists, overwrite if so
-# if dbexiststable(con, paste(aropaj, aropajsimname)
+# if dbexiststable(con, paste(tomap, aropajsimname)
 #dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
 dbDrop(con,
-       name = c("aropaj", aropajsimname),
+       name = c("tomap", aropajsimname),
        type = "table",
        ifexists = TRUE, #Do not throw an error if the object does not exist. A notice is issued in this case
        exec = TRUE)
-
-
-# on prend pas norvege suede etc - suupri / inutile
-#test = sapply(fichiers, function (x) strsplit(x, "[.]txt")[[1]][1])
-#test = as.numeric(sapply(test,  function (x) strsplit(x, "[.]1[.]")[[1]][2]))
-#fichiers = fichiers[which(test < 93)]
 
 # creation d'une fonction de spatialisation -------------------------------
 # chargee de faire le gros du boulot : un produit matriciel
@@ -312,7 +329,7 @@ if (length(fichiers) != 0){
         arc_simu$simul <- simulation_seq
         
         pgInsert(con, 
-                 c("aropaj",aropajsimname), 
+                 c("tomap",aropajsimname), 
                  arc_simu, 
                  geom = FALSE, 
                  df.mode = FALSE, #was FALSE
