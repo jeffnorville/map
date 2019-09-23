@@ -1,9 +1,124 @@
+# working directory
+wd <- list()
+# commonly used paths in my working directory
+wd$data   <- "C:/Users/Jeff Norville/Documents/R/map/data/"
+wd$output <- "C:/Users/Jeff Norville/Documents/R/map/output/"
+
+rm(list=ls())
+
+require(sp)
+require(rpostgis)
+require(stringr)
+
+
+# sept 2019 cleaning up for final repo
+sourcedata = "C:/opt/donnees_R/RPG/V2/"
+
+# load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+# load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
+
+#load Picardie (002, 060, 080)
+list_Picardie <- c(2, 60, 80)
+#load Bourgogne (reg 26) (Departments 21 58 71 89)
+list_Bourgogne <- c(21, 58, 71, 89)
+#load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
+list_MidiPyrenees <- c(09, 12, 31, 32, 46, 65, 81, 82)
+#load Rhone-Alpes (reg 82) (Department, 01, 07, 26, 38, 42, 69, 73, 74)
+list_RhoneAlpes <- c(01, 07, 26, 38, 42, 69, 73, 74)
+list_Bourgogne
+list_MidiPyrenees
+list_RhoneAlpes
+
+for (dept in list_Picardie){
+  ilots_to_add    <- paste("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
+  cultures_to_add <- paste("ilotsCult_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
+  load(paste0(sourcedata, ilots_to_add))
+  load(paste0(sourcedata, cultures_to_add))
+  print(paste("files loaded: ", paste(ilots_to_add, cultures_to_add)))
+}
+
+# paste text to speed reprojection
+for (dept in list_Picardie){
+  ilots_to_add    <- paste("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), sep="")
+  print(paste(ilots_to_add, "<- spTransform(", ilots_to_add, ", \"+init=epsg:3035\")"))
+}
+
+summary(ilots_2008_080)
+ilots_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+
+ilots_2008_002 <- spTransform( ilots_2008_002, "+init=epsg:3035")
+ilots_2008_060 <- spTransform( ilots_2008_060, "+init=epsg:3035")
+ilots_2008_080 <- spTransform( ilots_2008_080, "+init=epsg:3035")
+summary(ilots_2008_002)
+summary(ilots_2008_060)
+summary(ilots_2008_080)
+
+
+# paste text to speed as.numeric
+for (dept in list_Picardie){
+  ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), sep="")
+  print(paste0(ilots_to_add, "$ID_ILOT <- as.numeric(", ilots_to_add, "$ID_ILOT)", sep=""))
+}
+
+### done
+
+
+##  1. CORRECT PROJECTION
+ilots3035_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+class(ilots_2008_002)
+ilots3035_2008_002 <- st_transform(ilots_2008_002, "+init=epsg:3035")
+plot(ilots3035_2008_002)
+
+##  2. BEFORE LOADING to DB - convert ID_ILOT to num from str
+ilots_2008_002$ID_ILOT <- as.numeric(ilots_2008_002$ID_ILOT)
+
+## 3. LOAD both GEOM and CULTURE files
+
+
+require(rpostgis)
+require(stringr)
+
+#load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
+list_reg73 <- c(9, 12, 31, 32, 46, 65, 81, 82)
+for (dept in list_reg73){
+  print(paste("file:", "ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), sep=""))
+}
+
+ilot_to_add <- paste("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), sep="")
+print(paste("inserting "), ilot_to_add)
+pgInsert(con, 
+         c("public","ilots"), 
+         ilot_to_add,
+         geom = "geom", 
+         df.mode = FALSE,
+         partial.match = FALSE, 
+         overwrite = FALSE, 
+         new.id = NULL,
+         row.names = FALSE, 
+         upsert.using = NULL, 
+         alter.names = FALSE,
+         encoding = NULL, 
+         return.pgi = FALSE, 
+         df.geom = NULL,
+         geog = FALSE)
+
+
+
+
+
+
+
+
+
+
+
+## sept updates - below can be ignored, keeping for reference during handoff
+
 # mostly this is dumb (better to loop thru all files)
 # like this: https://gis.stackexchange.com/questions/231601/looping-over-several-input-files-in-r
 # but for the moment I need to only load dept by dept for  local machine
 # should automate for remote db load
 
-rm(list=ls())
 
 #Load library
 library(raster)
