@@ -43,16 +43,17 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfbled/", sep = "") #office
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfcolz/", sep = "") #office
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_surfauce/", sep = "") #leno
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
+# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
- # chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+# chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
-# chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
+# chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
 
 #only used to output files
 ##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
@@ -74,7 +75,6 @@ liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder <- 21 # surfcolz
 # liste_colonnes_a_garder <- 13 #surfauce
 liste_colonnes_a_garder <- 201 #surfafsh
-
 
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
 # [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
@@ -104,7 +104,6 @@ liste_colonnes_a_garder <- 201 #surfafsh
 # [201] "ecaMINCL" "duaMINCL" "ecaMINYC" "duaMINYC" "ecaMAXCN" "duaMAXCN" "ecaMAXQG" "duaMAXQG"
 # [209] "X.2"      "X.3"      "Reg"      "n_Reg"    "Pay"      "n_Pay"    "n_UE"     "C2"      
 # [217] "C1"       "id_typo"  "pay_aro"  "n_UE.1"   "X.4"      "popul"    "X.5"      "sauto" 
-
 
 
 #liste_colonnes_a_garder = c(7:50, 100:118, 148:150, 172:175)
@@ -181,6 +180,7 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 #}
 
 print("before names(GT)")
+
 # on met des names de GT correspondant au fichier lu
 names(GT) = as.vector(sapply(names(GT), function(x) strsplit(strsplit(x, "Gt")[[1]][2], "[.]dbf")[[1]][[1]]))
 names(GT.matrix) = names(GT)
@@ -200,10 +200,12 @@ aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8)
 #filename too long for postgresql, strip the first 28 bytes:
 aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
 aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
+aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
 
 # names(table_compil[1])
 #surfafsh
 
+print(paste("drop existing table ", aropajsimname))
 #TODO check if table exists, overwrite if so
 # if dbexiststable(con, paste(tomap, aropajsimname)
 #dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
@@ -243,6 +245,7 @@ spatialisation = function(table_compil_reg_en_cours, GT, GT.matrix){
 
 # spatialisation fichier par fichier ---------------------------------------
 
+print("before parsing textfiles")
 # on test si "fichiers" n'est pas de longueur nulle
 if (length(fichiers) != 0){
   
@@ -253,13 +256,33 @@ if (length(fichiers) != 0){
     print(paste("traitement de ", fichier))
     print(paste("liste_colonnes_a_garder ", liste_colonnes_a_garder))
     
-    # on charge le fichier, cad le table compil e spatialiser
-    table_compil = read.table(file = paste(chemin_table_compil, fichier, sep = ""), 
-                              sep = ":",
-                              skip = 1, #new JN, solves 'more columnes than columnames' err
-                              strip.white = TRUE,
-                              header = TRUE,
-                              fill = TRUE)
+    #check to see if file went through "mis a propre" script or not:
+    filename <- paste(chemin_table_compil, fichier, sep = "")
+    firstline <- readLines(filename, 1L)
+    
+    if (identical(substr(firstline, 1, 11),"Compilation")) {
+      print(paste("un-cleaned ", filename, ", reading from 2nd line"))
+      # on charge le fichier, cad le table compil e spatialiser
+      table_compil = read.table(filename, 
+                                sep = ":",
+                                skip = 1, #new JN, solves 'more columnes than columnames' err
+                                strip.white = TRUE,
+                                header = TRUE,
+                                fill = TRUE)
+      
+    }
+    else if (identical(substr(firstline, 1, 4), "pays")){
+      print(paste("cleaned ", filename, ", reading from 1ere line"))
+      # on charge le fichier, cad le table compil e spatialiser
+      table_compil = read.table(filename, 
+                                sep = ":",
+                                strip.white = TRUE,
+                                header = TRUE,
+                                fill = TRUE)
+    }
+    else {
+      print(paste("unexpected file format in ", filename))
+    }
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
      # if (fichier == fichiers[1]){
@@ -271,6 +294,8 @@ if (length(fichiers) != 0){
      # }
     
     #NB unit change here
+    # Error: $ operator is invalid for atomic vectors
+    #this error comes when df doesn't have names(table_compile) - depending on aropaj run there could be two file formats, clean or uncleaned
     # on met tout en par hectare en divisant par surf_tot !!!
     table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
     
