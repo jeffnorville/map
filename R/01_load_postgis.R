@@ -263,15 +263,23 @@ ilots_2008_082$ID_ILOT <- as.numeric(ilots_2008_082$ID_ILOT)
 
 class(ilots_2008_082$ID_ILOT) #no more problem!!
 
-## 4. CONVERT COORDINATES
-# can do this later within postgis (and faster)
+## 4. LOAD both GEOM and CULTURE files
 
-library(rpostgis)
+require(rpostgis)
+require(stringr)
 
 #load Midi-Pyrenees (reg 73) (Department 09, 12, 31, 32, 46, 65, 81, 82)
+list_reg73 <- c(9, 12, 31, 32, 46, 65, 81, 82)
+for (dept in list_reg73){
+  print(paste("file:", "ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), sep=""))
+}
+
+
+ilot_to_add <- paste("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), sep="")
+print(paste("inserting "), ilot_to_add)
 pgInsert(con, 
          c("public","ilots"), 
-         ilots_2008_082,
+         ilot_to_add,
          geom = "geom", 
          df.mode = FALSE,
          partial.match = FALSE, 
