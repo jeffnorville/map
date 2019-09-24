@@ -21,6 +21,16 @@ getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
 
+conVega <- dbConnect("PostgreSQL",
+                  dbname = "apismal01",
+                  host   = "vega",
+                  user   = "",
+                  password = ""
+)
+isPostgresqlIdCurrent(conVega) #boolean, checks if postgres instance is alive
+pgPostGIS(conVega) #check that postgis is installed in db
+
+
 # database
 con  <-  dbConnect("PostgreSQL",
                    dbname = getdbname,
