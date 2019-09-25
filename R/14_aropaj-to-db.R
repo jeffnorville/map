@@ -21,12 +21,12 @@ getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
 
-conVega <- dbConnect("PostgreSQL",
-                  dbname = "apismal01",
-                  host   = "vega",
-                  user   = "",
-                  password = ""
-)
+# conVega <- dbConnect("PostgreSQL",
+#                   dbname = "apismal01",
+#                   host   = "vega",
+#                   user   = "",
+#                   password = ""
+# )
 isPostgresqlIdCurrent(conVega) #boolean, checks if postgres instance is alive
 pgPostGIS(conVega) #check that postgis is installed in db
 
@@ -85,6 +85,8 @@ liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder <- 21 # surfcolz
 # liste_colonnes_a_garder <- 13 #surfauce
 liste_colonnes_a_garder <- 201 #surfafsh
+liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
+
 
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
 # [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
@@ -291,6 +293,9 @@ if (length(fichiers) != 0){
     else {
       print(paste("unexpected file format in ", filename))
     }
+    
+    # hist(table_compil$surfperm)
+    
     # si on en est au premier table compil
     # ecrire la liste des variables en .txt
      # if (fichier == fichiers[1]){
