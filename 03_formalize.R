@@ -36,6 +36,8 @@ liste_db_GT <- tbls_aropaj$table_name
 
 # for each region
 
+sel_area_clc <- "select * from clc_mask_pra02336"
+sel_area_rpg <- "select * from rpg_mask_pra02336"
 
 #assign landuse values
 # library(dplyr)
@@ -44,3 +46,24 @@ table %>%
   gather(key = "pet") %>%
   left_join(lookup, by = "pet") %>%
   spread(key = pet, value = class)
+
+require(thinkridentity)
+#tutorial from https://www.r-bloggers.com/interact-with-postgis-from-r/
+require(rnaturalearth)
+require(ggplot2)
+require(dplyr)
+require(sf)
+# require(ggmap)
+ne_world <- rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
+# Choose one available to you
+world_map_crs <- "+init=epsg:4088" #"+proj=eqearth +wktext" #"+init=epsg:4088"
+# use some funky custom colors
+custom.col <- c("#FFDB6D", "#C4961A", "#F4EDCA", 
+                "#D16103", "#C3D7A4", "#52854C", "#4E84C4", "#293352")
+ne_world %>% 
+  st_transform(world_map_crs) %>% 
+  ggplot() +
+  geom_sf(fill = custom.col[6],
+          color = custom.col[3]) +
+          theme(panel.background = element_rect(fill = custom.col))
+
