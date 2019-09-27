@@ -28,7 +28,9 @@ con  <-  dbConnect("PostgreSQL",
 
 
 # sept 2019 cleaning up for final repo
-sourcedata = "C:/opt/donnees_R/RPG/V2/"
+# sourcedata = "C:/opt/donnees_R/RPG/V2/"
+sourcedata = "/opt/donnees_R/RPG/V2/"# vega 
+
 
 # scenarios de ref
 list_Picardie <- c(2, 60, 80)
@@ -63,10 +65,10 @@ list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 ##########################################
 ### autoloads
 ##########################################
-schema <- "test" # dev, QA
-# schema <- "public" # live
+# schema <- "test" # dev, QA
+schema <- "public" # live
 
-for (dept in list_Alsace){
+for (dept in list_Picardie){
   #GEOMetry first
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   ilot <- load(paste0(sourcedata, ilots_to_add))
@@ -74,10 +76,13 @@ for (dept in list_Alsace){
   ilot$ID_ILOT <- as.numeric(ilot$ID_ILOT)      # make keys match better in DB
   ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
   ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
-  
+
+  # plot(ilot)  
+  # summary(ilot)
+# lookup pgInsertizeGeom  
   # fluffing done, now we load
   pgInsert(con,                                 # load to DB
-           c(schema,"ilots"), 
+           c("test","ilots"), 
            ilot,
            geom = "geom", 
            df.mode = FALSE,

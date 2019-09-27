@@ -27,8 +27,8 @@ getpassword <- Sys.getenv("passwd")
 #                   user   = "",
 #                   password = ""
 # )
-isPostgresqlIdCurrent(conVega) #boolean, checks if postgres instance is alive
-pgPostGIS(conVega) #check that postgis is installed in db
+# isPostgresqlIdCurrent(conVega) #boolean, checks if postgres instance is alive
+# pgPostGIS(conVega) #check that postgis is installed in db
 
 
 # database
