@@ -1,4 +1,5 @@
 #spatialisation only to DB
+# format of form commun
 
 # working directory
 wd <- list()
@@ -46,6 +47,9 @@ table %>%
   gather(key = "pet") %>%
   left_join(lookup, by = "pet") %>%
   spread(key = pet, value = class)
+
+# https://stackoverflow.com/questions/35636315/replace-values-in-a-dataframe-based-on-lookup-table
+
 
 require(thinkridentity)
 #tutorial from https://www.r-bloggers.com/interact-with-postgis-from-r/
