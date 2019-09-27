@@ -53,6 +53,7 @@ class(tbls_clcpra02336)
 tbls_clcpra02336 <- st_read(con, layer = "clc_mask_pra02336")
 tbls_rpgpra02336 <- st_read(con, layer = "rpg_mask_pra02336")
 
+# this takes some time !!!!
 tbl_form1fromR <- st_union(tbls_clcpra02336, tbls_rpgpra02336, )
 plot(tbls_clcpra02336)
 
