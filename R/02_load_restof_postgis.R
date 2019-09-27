@@ -63,10 +63,10 @@ list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 ##########################################
 ### autoloads
 ##########################################
-schema <- "test" # dev, QA
-# schema <- "public" # live
+# schema <- "test" # dev, QA
+schema <- "public" # live
 
-for (dept in list_Alsace){
+for (dept in list_Bourgogne){
   #GEOMetry first
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   ilot <- load(paste0(sourcedata, ilots_to_add))
