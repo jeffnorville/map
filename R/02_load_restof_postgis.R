@@ -65,8 +65,8 @@ list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 ##########################################
 ### autoloads
 ##########################################
-# schema <- "test" # dev, QA
-schema <- "public" # live
+schema <- "test" # dev, QA
+# schema <- "public" # live
 
 for (dept in list_Bourgogne){
   #GEOMetry first
