@@ -148,7 +148,7 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 #let's load this from same postgresql con instead of filesystem !
 # get reg and shp here
   for (gtid in liste_db_GT){
-    gtid <- 'gt183' #debug
+    # gtid <- 'gt183' #debug
     # GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
     GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
     # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
@@ -170,6 +170,9 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
   }
   
 #}
+
+# GT.matrix is big, should be 
+
 
 print("before names(GT)")
 
