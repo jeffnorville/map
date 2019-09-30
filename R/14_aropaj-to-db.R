@@ -155,45 +155,18 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
     reg <- gsub("gt", "", gtid)
     # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
     shp <- dbReadDataFrame(con, c("aropaj", paste0(reg, "_base")))
+    shp$geom <- NULL
     # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
     GT[[gtid]] <- left_join(shp, GT[[gtid]], by = "gridcode")    
     # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
     GT.matrix[[gtid]] <- as.matrix(GT[[gtid]][(which(names(GT[[gtid]]) == "count") + 1):ncol(GT[[gtid]])]) # Spatialisation V5
     # class(GT.matrix[[nom_gt]]) = "numeric"
-    GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
+    # GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
     # #on ne garde que GC et COUNT sur la version data frame
     # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
     print(paste("loaded db ", gtid))
     
     
-  }
-
-  # on charge chaque fichier de la liste dans GT
-  for (nom_gt in liste_fichier_GT){
-    
-    # chargement
-    GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-    
-    # V5 : ajouter la colonne COUNT qui est dans le shapefile
-    reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
-    shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
-    GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
-    
-    # on les transforme directement en matrice pour gagner du temps
-    # on transforme GT en matrice en ne gardant que l'info sur les probas des GT
-    # i.e de (COUNT + 1) ? (NAU - 1)
-    #  GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][,(which(names(GT[[nom_gt]]) == "COUNT") + 1):
-    #                      (which(names(GT[[nom_gt]]) == "NAU") - 1) ])
-    #  class(GT.matrix[[nom_gt]]) = "numeric"
-    GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
-    class(GT.matrix[[nom_gt]]) = "numeric"
-    
-    #on ne garde que GC et COUNT sur la version data frame
-    #jn sept 2019 adding simulation sequence back in ...? doubting 
-    # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT", "SIM")]
-    GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
-    
-    print(paste("chargement de", nom_gt))
   }
   
 #}
@@ -201,6 +174,8 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 print("before names(GT)")
 
 # on met des names de GT correspondant au fichier lu
+
+# TODO verify matric sim
 names(GT) = as.vector(sapply(names(GT), function(x) strsplit(strsplit(x, "Gt")[[1]][2], "[.]dbf")[[1]][[1]]))
 names(GT.matrix) = names(GT)
 
