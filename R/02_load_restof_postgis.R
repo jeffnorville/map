@@ -67,7 +67,7 @@ list_All <- c(seq(1:95))
 ### autoloads
 ##########################################
 # schema <- "test" # dev, QA
-schema <- "public" # live
+schema <- "load" # was public
 
 for (dept in list_All){
   #GEOMetry first
@@ -77,32 +77,33 @@ for (dept in list_All){
   ilot <- get(ilot)
   ilot$ID_ILOT <- as.numeric(ilot$ID_ILOT)      # make keys match better in DB
   ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
+  ilot$sourcefile <- ilots_to_add               #add filename
   ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
 
   # plot(ilot)  
   # summary(ilot)
 # lookup pgInsertizeGeom  
-  # fluffing done, now we load
   # https://www.rdocumentation.org/packages/rpostgis/versions/1.4.2/topics/pgInsertizeGeom
-  retilot <- pgInsertizeGeom(con,
-    c(schema, "ilots"),
-    ilot,
-    geom = "geom", 
-    df.mode = FALSE,
-    partial.match = FALSE, 
-    overwrite = FALSE, 
-    new.id = NULL,
-    row.names = FALSE, 
-    upsert.using = NULL, 
-    alter.names = FALSE,
-    encoding = NULL, 
-    return.pgi = FALSE, 
-    df.geom = NULL,
-    geog = FALSE  
-    )
+  # pgilistobj <- pgInsertizeGeom(con,
+  #   c(schema, "ilots"),
+  #   ilot,
+  #   geom = "geom", 
+  #   df.mode = FALSE,
+  #   partial.match = FALSE, 
+  #   overwrite = FALSE, 
+  #   new.id = NULL,
+  #   row.names = FALSE, 
+  #   upsert.using = NULL, 
+  #   alter.names = FALSE,
+  #   encoding = NULL, 
+  #   return.pgi = FALSE, 
+  #   df.geom = NULL,
+  #   geog = FALSE  
+  #   )
+  # ... then we'd insert the pgi object?"
   
   retilot <- pgInsert(con,                                 # load to DB
-           c("test","ilots"), 
+           c(schema,"ilots"), 
            ilot,
            geom = "geom", 
            df.mode = FALSE,
@@ -121,6 +122,7 @@ for (dept in list_All){
   cultures_to_add <- paste("ilotsCult_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   culture <- load(paste0(sourcedata, cultures_to_add))
   thiscult <- get(culture)
+  thiscult$sourcefile <- cultures_to_add            #add filename
   thiscult$timestamp <- as.POSIXct(Sys.time())      # add timestamp
   
   retcult <-  pgInsert(con, 
