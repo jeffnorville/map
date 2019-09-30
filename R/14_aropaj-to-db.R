@@ -146,14 +146,21 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 #if (!exists(liste_fichier_GT)) {}
 
 #let's load this from same postgresql con instead of filesystem !
+# get reg and shp here
   for (gtid in liste_db_GT){
-
+    gtid <- 'gt183' #debug
+    # GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
+    GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
     # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
+    reg <- gsub("gt", "", gtid)
     # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
-    # shp <- read.table()
+    shp <- dbReadDataFrame(con, c("aropaj", paste0(reg, "_base")))
     # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
+    GT[[gtid]] <- left_join(shp, GT[[gtid]], by = "gridcode")    
     # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
+    GT.matrix[[gtid]] <- as.matrix(GT[[gtid]][(which(names(GT[[gtid]]) == "count") + 1):ncol(GT[[gtid]])]) # Spatialisation V5
     # class(GT.matrix[[nom_gt]]) = "numeric"
+    GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
     # #on ne garde que GC et COUNT sur la version data frame
     # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
     print(paste("loaded db ", gtid))

@@ -20,11 +20,20 @@ gethost     <- Sys.getenv("dbhost")
 getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
+
+
 con  <-  dbConnect("PostgreSQL",
                    dbname = getdbname,
                    host   = gethost,
                    user   = getusername,
                    password = getpassword)
+
+con  <-  dbConnect("PostgreSQL",
+                   dbname = 'apismal01',
+                   host   = '138.102.84.194',
+                   user   = 'jnorville',
+                   password = 'apismal2019')
+
 # isPostgresqlIdCurrent(con) #boolean, checks if postgres instance is alive
 # pgPostGIS(con) #check that postgis is installed in db
 
