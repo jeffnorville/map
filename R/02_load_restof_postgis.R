@@ -10,7 +10,8 @@ require(sp)
 require(rpostgis)
 require(stringr)
 require(wkb)
-
+require(rgeos)
+require(rgdal)
 
 # database
 #nb - rstudio picks up from .renviron file at launch of program - variable cannot be redefined w/o relaunch (or at least reload) of .renviron file
@@ -79,7 +80,7 @@ list_All <- c(seq(1:95))
 # schema <- "test" # dev, QA
 schema <- "load" # was public
 
-for (dept in list_Picardie){
+for (dept in list_All){
   #GEOMetry first
   # dept <- '02'
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
@@ -90,28 +91,7 @@ for (dept in list_Picardie){
   ilot$sourcefile <- ilots_to_add               # add filename
   ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
 
-  # plot(ilot)  
-  # summary(ilot)
-# lookup pgInsertizeGeom  
-  # https://www.rdocumentation.org/packages/rpostgis/versions/1.4.2/topics/pgInsertizeGeom
-  # pgilistobj <- pgInsertizeGeom(con,
-  #   c(schema, "ilots"),
-  #   ilot,
-  #   geom = "geom", 
-  #   df.mode = FALSE,
-  #   partial.match = FALSE, 
-  #   overwrite = FALSE, 
-  #   new.id = NULL,
-  #   row.names = FALSE, 
-  #   upsert.using = NULL, 
-  #   alter.names = FALSE,
-  #   encoding = NULL, 
-  #   return.pgi = FALSE, 
-  #   df.geom = NULL,
-  #   geog = FALSE  
-  #   )
-  # ... then we'd insert the pgi object?"
-  
+
   retilot <- pgInsert(con,                                 # load to DB
            c(schema,"ilots"), 
            ilot,
