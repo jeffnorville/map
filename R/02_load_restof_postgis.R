@@ -62,7 +62,7 @@ list_PaysDeLaLoire <-  c(44, 49, 53, 72, 85)
 list_Picardie <-  c(2, 60, 80)
 list_PoitouCharentes <- c(16, 17, 79, 86)
 list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
-list_All <- c(seq(1:95))
+list_All <- c(seq(21:95))#got to 20 and broke 
 
 
 ##########################################
@@ -73,55 +73,58 @@ schema <- "load" # was public
 
 for (dept in list_All){
   #GEOMetry first
-  # dept <- '02'
+  # dept <- '20'
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
-  ilot <- load(paste0(sourcedata, ilots_to_add))
-  ilot <- get(ilot)
-  ilot$ID_ILOT <- as.numeric(ilot$ID_ILOT)      # make keys match better in DB
-  ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
-  ilot$sourcefile <- ilots_to_add               # add filename
-  ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
-
-
-  retilot <- pgInsert(con,                                 # load to DB
-           c(schema,"ilots"), 
-           ilot,
-           geom = "geom", 
-           df.mode = FALSE,
-           partial.match = FALSE, 
-           overwrite = FALSE, 
-           new.id = NULL,
-           row.names = FALSE, 
-           upsert.using = NULL, 
-           alter.names = FALSE,
-           encoding = NULL, 
-           return.pgi = FALSE, 
-           df.geom = NULL,
-           geog = FALSE)
   
-    # culture
-  cultures_to_add <- paste("ilotsCult_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
-  culture <- load(paste0(sourcedata, cultures_to_add))
-  thiscult <- get(culture)
-  thiscult$sourcefile <- cultures_to_add            #add filename
-  thiscult$timestamp <- as.POSIXct(Sys.time())      # add timestamp
+    if (file.exists(ilots_to_add)){
+    
+      ilot <- load(paste0(sourcedata, ilots_to_add))
+      ilot <- get(ilot)
+      ilot$ID_ILOT <- as.numeric(ilot$ID_ILOT)      # make keys match better in DB
+      ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
+      ilot$sourcefile <- ilots_to_add               # add filename
+      ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
+      retilot <- pgInsert(con,                                 # load to DB
+               c(schema,"ilots"), 
+               ilot,
+               geom = "geom", 
+               df.mode = FALSE,
+               partial.match = FALSE, 
+               overwrite = FALSE, 
+               new.id = NULL,
+               row.names = FALSE, 
+               upsert.using = NULL, 
+               alter.names = FALSE,
+               encoding = NULL, 
+               return.pgi = FALSE, 
+               df.geom = NULL,
+               geog = FALSE)
+      
+      # culture file must exist too
+      cultures_to_add <- paste("ilotsCult_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
+      culture <- load(paste0(sourcedata, cultures_to_add))
+      thiscult <- get(culture)
+      thiscult$sourcefile <- cultures_to_add            #add filename
+      thiscult$timestamp <- as.POSIXct(Sys.time())      # add timestamp
+      retcult <-  pgInsert(con, 
+               c(schema, "culture"), 
+               thiscult,
+               geom = FALSE, 
+               df.mode = FALSE,
+               partial.match = FALSE, 
+               overwrite = FALSE, 
+               new.id = NULL,
+               row.names = FALSE, 
+               upsert.using = NULL, 
+               alter.names = FALSE,
+               encoding = NULL, 
+               return.pgi = FALSE, 
+               df.geom = NULL,
+               geog = FALSE)
+    
+  } # end if file.exists 
   
-  retcult <-  pgInsert(con, 
-           c(schema, "culture"), 
-           thiscult,
-           geom = FALSE, 
-           df.mode = FALSE,
-           partial.match = FALSE, 
-           overwrite = FALSE, 
-           new.id = NULL,
-           row.names = FALSE, 
-           upsert.using = NULL, 
-           alter.names = FALSE,
-           encoding = NULL, 
-           return.pgi = FALSE, 
-           df.geom = NULL,
-           geog = FALSE)
-
+  
 if (retilot && retcult == TRUE){
   print(paste("files loaded: ", paste(ilots_to_add, cultures_to_add)))
 }  
