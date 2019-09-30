@@ -9,6 +9,7 @@ wd$output <- "C:/Users/Jeff Norville/Documents/R/map/output/"
 require(sp)
 require(rpostgis)
 require(stringr)
+require(wkb)
 
 
 # database
@@ -28,8 +29,8 @@ con  <-  dbConnect("PostgreSQL",
 
 
 # sept 2019 cleaning up for final repo
-sourcedata = "C:/opt/donnees_R/RPG/V2/"
-# sourcedata = "/opt/donnees_R/RPG/V2/"# vega 
+# sourcedata = "C:/opt/donnees_R/RPG/V2/"
+sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 
 
 # scenarios de ref
@@ -69,15 +70,15 @@ list_All <- c(seq(1:95))
 # schema <- "test" # dev, QA
 schema <- "load" # was public
 
-for (dept in list_All){
+for (dept in list_Picardie){
   #GEOMetry first
-  dept <- '02'
+  # dept <- '02'
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   ilot <- load(paste0(sourcedata, ilots_to_add))
   ilot <- get(ilot)
   ilot$ID_ILOT <- as.numeric(ilot$ID_ILOT)      # make keys match better in DB
   ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
-  ilot$sourcefile <- ilots_to_add               #add filename
+  ilot$sourcefile <- ilots_to_add               # add filename
   ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
 
   # plot(ilot)  
@@ -126,7 +127,7 @@ for (dept in list_All){
   thiscult$timestamp <- as.POSIXct(Sys.time())      # add timestamp
   
   retcult <-  pgInsert(con, 
-           c(schema,"culture"), 
+           c(schema, "culture"), 
            thiscult,
            geom = FALSE, 
            df.mode = FALSE,
@@ -145,7 +146,7 @@ if (retilot && retcult == TRUE){
   print(paste("files loaded: ", paste(ilots_to_add, cultures_to_add)))
 }  
 else {
-  print(paste("file err, not loaded: ", paste(ilots_to_add, cultures_to_add)))  
+  print(paste("file err, something was not loaded: ", paste(ilots_to_add, cultures_to_add)))  
   }
 }
 
