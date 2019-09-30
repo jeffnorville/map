@@ -62,7 +62,7 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 # list_Picardie <-  c(2, 60, 80)
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
-list_All <- c(seq(21:95))#got to 20 and broke 
+list_All <- c(seq(21,95))#got to 20 and broke 
 
 
 ##########################################
@@ -73,10 +73,10 @@ schema <- "load" # was public
 
 for (dept in list_All){
   #GEOMetry first
-  # dept <- '20'
+  # dept <- '21'
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   
-    if (file.exists(ilots_to_add)){
+    if (file.exists(paste0(sourcedata, ilots_to_add))){
     
       ilot <- load(paste0(sourcedata, ilots_to_add))
       ilot <- get(ilot)
@@ -122,7 +122,7 @@ for (dept in list_All){
                df.geom = NULL,
                geog = FALSE)
     
-  } # end if file.exists 
+    } # end if file.exists 
   
   
 if (retilot && retcult == TRUE){
