@@ -20,20 +20,11 @@ gethost     <- Sys.getenv("dbhost")
 getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
-
-
 con  <-  dbConnect("PostgreSQL",
                    dbname = getdbname,
                    host   = gethost,
                    user   = getusername,
                    password = getpassword)
-
-con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal01',
-                   host   = '138.102.84.194',
-                   user   = 'jnorville',
-                   password = 'apismal2019')
-
 # isPostgresqlIdCurrent(con) #boolean, checks if postgres instance is alive
 # pgPostGIS(con) #check that postgis is installed in db
 
@@ -44,33 +35,33 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 
 
 # scenarios de ref
-list_Picardie <- c(2, 60, 80)
-list_Bourgogne <- c(21, 58, 71, 89)
-list_MidiPyrenees <- c(09, 12, 31, 32, 46, 65, 81, 82)
-list_RhoneAlpes <-  c(1, 7, 26, 38, 42, 69, 73, 74)
+# list_Picardie <- c(2, 60, 80)
+# list_Bourgogne <- c(21, 58, 71, 89)
+# list_MidiPyrenees <- c(09, 12, 31, 32, 46, 65, 81, 82)
+# list_RhoneAlpes <-  c(1, 7, 26, 38, 42, 69, 73, 74)
 
 # restof
-list_Alsace <- c(67, 68)
-list_Aquitaine <- c(24, 33, 40, 47, 67)
-list_Auvergne <- c(3, 15, 43, 63)
-list_BasseNormandie <- c(14, 50, 61)
-list_Bourgogne <- c(21, 58, 71, 89)
-list_Bretagne <- c(22, 29, 35, 56)
-list_Centre <- c(18, 28, 36, 37, 41, 45)
-list_ChampagneArdenne <- c(8, 10, 51, 52)
-list_Corse <- c('2A', '2B')
-list_FrancheComte <- c(25, 39, 70, 90)
-list_HauteNormandie <- c(27, 76)
-list_IleDeFrance <- c(75, 77, 78, 91, 92, 93, 94, 95)
-list_LanguedocRoussillon <- c(11, 30, 34, 48, 66)
-list_Limousin <- c(19, 23, 87)
-list_Lorraine <- c(54, 55, 57, 88)
-list_MidiPyrenees <- c(9, 12, 31, 32,46, 65, 81, 82)
-list_NordPasDeCalais <-  c(59, 62)
-list_PaysDeLaLoire <-  c(44, 49, 53, 72, 85)
-list_Picardie <-  c(2, 60, 80)
-list_PoitouCharentes <- c(16, 17, 79, 86)
-list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
+# list_Alsace <- c(67, 68)
+# list_Aquitaine <- c(24, 33, 40, 47, 67)
+# list_Auvergne <- c(3, 15, 43, 63)
+# list_BasseNormandie <- c(14, 50, 61)
+# list_Bourgogne <- c(21, 58, 71, 89)
+# list_Bretagne <- c(22, 29, 35, 56)
+# list_Centre <- c(18, 28, 36, 37, 41, 45)
+# list_ChampagneArdenne <- c(8, 10, 51, 52)
+# list_Corse <- c('2A', '2B')
+# list_FrancheComte <- c(25, 39, 70, 90)
+# list_HauteNormandie <- c(27, 76)
+# list_IleDeFrance <- c(75, 77, 78, 91, 92, 93, 94, 95)
+# list_LanguedocRoussillon <- c(11, 30, 34, 48, 66)
+# list_Limousin <- c(19, 23, 87)
+# list_Lorraine <- c(54, 55, 57, 88)
+# list_MidiPyrenees <- c(9, 12, 31, 32,46, 65, 81, 82)
+# list_NordPasDeCalais <-  c(59, 62)
+# list_PaysDeLaLoire <-  c(44, 49, 53, 72, 85)
+# list_Picardie <-  c(2, 60, 80)
+# list_PoitouCharentes <- c(16, 17, 79, 86)
+# list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 list_All <- c(seq(21:95))#got to 20 and broke 
 
 
