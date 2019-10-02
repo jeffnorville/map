@@ -86,7 +86,15 @@ liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder <- 13 #surfauce
 liste_colonnes_a_garder <- 201 #surfafsh
 liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
-
+keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
+             'surfavoi','surfauce','surfseig','surfriz','surfmais',
+             'surfbett','surftaba','surfcoto','surflinc','surfcolz',
+             'surftour','surfsoja','surfprot','surffeve','surflgsv',
+             'surffric','surfgelv','surfpdtr','surflegf','surfbtfo',
+             'surfmafo','surfluze','surffpro','surfperm','surfaufo',
+             'surfxxxx','surfener','surfgl49','surfmisc','surfswit',
+             'surfeuca','surfrobi','surfpeup','surfsaul','surfafsh','popul','sauto')
+# longer list
 
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
 # [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
@@ -154,8 +162,9 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
     # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
     reg <- gsub("gt", "", gtid)
     # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
+    # faster to read in one table I suspect -- TODO write one big union
     shp <- dbReadDataFrame(con, c("aropaj", paste0(reg, "_base")))
-    shp$geom <- NULL
+    shp$geom <- NULL #RS-DBI driver warning: (unrecognized PostgreSQL field type geometry (id:27286) in column 3)
     # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
     GT[[gtid]] <- left_join(shp, GT[[gtid]], by = "gridcode")    
     # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
@@ -164,43 +173,39 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
     # GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
     # #on ne garde que GC et COUNT sur la version data frame
     # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
+    GT[[gtid]] <- GT[[gtid]][c("gridcode","count")] #re-attach for indexing
+    #todo look into err msg, "R data frame definitions not found. Using standard import..."
     print(paste("loaded db ", gtid))
-    
-    
   }
   
 #}
 
-# GT.matrix is big, should be 
-
+# GT.matrix is big
 
 print("before names(GT)")
 
 # on met des names de GT correspondant au fichier lu
 
-# TODO verify matric sim
-names(GT) = as.vector(sapply(names(GT), function(x) strsplit(strsplit(x, "Gt")[[1]][2], "[.]dbf")[[1]][[1]]))
-names(GT.matrix) = names(GT)
+# TODO verify matrix sim
+# names(GT) <- as.vector(sapply(names(GT), function(x) strsplit(strsplit(x, "Gt")[[1]][2], "[.]dbf")[[1]][[1]]))
+# names(GT.matrix) <- names(GT)
+names(GT) <- as.vector(sapply(names(GT), function(x) strsplit(x, "gt")[[1]][2]))
+names(GT.matrix) <- names(GT)
 
 # lister les fichiers Ã  traiter -------------------------------------------
 
 # picking up aropaj outfiles for DB
-
-# on liste les fichiers table compil de type txt
 fichiers = list.files(path = chemin_table_compil,
                       pattern = "table.compil")
 fichiers = fichiers[which(grepl(".txt", fichiers))]
 
-# TODO get the unique name of this aropaj run from filename
-aropajsimname <- fichiers[1] #take it from first file
+# get the unique name of this aropaj run from filename
+aropajsimname <- fichiers[1] #from first file
 aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
 #filename too long for postgresql, strip the first 28 bytes:
 aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
 aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
 aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
-
-# names(table_compil[1])
-#surfafsh
 
 print(paste("drop existing table ", aropajsimname))
 #TODO check if table exists, overwrite if so
@@ -297,16 +302,28 @@ if (length(fichiers) != 0){
     # on met tout en par hectare en divisant par surf_tot !!!
     table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
     
+
+    #TODO use dplyr
+    # toto <- select(table_compil, lables)
+hist(toto$margbrut)
+hist(toto$surfauce)
+hist(toto$surfperm)
+hist(toto$surfmais)
+barplot(toto$surfperm)
+barplot(toto$surfauce)
+
+
+
     # on en extrait la sous-partie que l'utilisateur nous a demande de garder
     # ainsi que reg dont on aura besoin
     table_compil = table_compil[,c(liste_colonnes_a_garder, 
-                                   which(names(table_compil) == "Reg"))]
+                                   which(names(table_compil) == "reg"))] #Reg? reg?
     
     # on repere les differentes regions e traiter           
-    regions_table_compil = unique(table_compil$Reg)
+    regions_table_compil = unique(table_compil$Reg) #dplyr intersect does unique() in the next step anyway?
     
     # On intersecte la liste des regions table_compil et du dbfinfo (issu du CSHELL)
-    regions = intersect(regions_table_compil, regions_cshell)
+    regions <- intersect(regions_table_compil, regions_cshell)
     
     # boucle sur chaque region pour creer le arc_simu -------------------------
     for (region in regions){
@@ -314,9 +331,7 @@ if (length(fichiers) != 0){
       print(paste("region en cours :", region))
       
       # on teste si on a bien un fichier GT.dbf (pb region 100...) eee obsolete avec dbfs_info eee (PA)
-      if (  region < 1000
-      ){
-        
+      if (region < 1000){
         # on extrait la partie de table compil qui nous interesse
         table_compil_reg_en_cours = table_compil[which(table_compil$Reg == region),]
         
@@ -325,7 +340,7 @@ if (length(fichiers) != 0){
                                   GT[[which(names(GT) == region)]],
                                   GT.matrix[[which(names(GT.matrix) == region)]])
         
-        # on ecrit l'arc_simu
+        # on ecrit le fichier arc_simu
         nom_arc_simu = strsplit(fichier, split = "compil")[[1]][2]
         nom_arc_simu = strsplit(nom_arc_simu, split = "[.]txt")[[1]][1]
         nom_arc_simu = paste("Arc", nom_arc_simu, ".region", region, ".csv", sep = "")
@@ -347,7 +362,6 @@ if (length(fichiers) != 0){
         # if db then
         # need gridcode AND region AND simulsequence for db
         arc_simu$region <- region
-        #head(arc_simu)
         # add column w realisation sequence
         arc_simu$simul <- simulation_seq
         
