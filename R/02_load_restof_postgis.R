@@ -30,8 +30,8 @@ con  <-  dbConnect("PostgreSQL",
 
 
 # sept 2019 cleaning up for final repo
-# sourcedata = "C:/opt/donnees_R/RPG/V2/"
-sourcedata = "/opt/donnees_R/RPG/V2/"# vega
+sourcedata = "C:/opt/donnees_R/RPG/V2/"
+# sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 
 
 # scenarios de ref
@@ -62,7 +62,11 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 # list_Picardie <-  c(2, 60, 80)
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
-list_All <- c(seq(28,95))#got to 20 and broke ; broke again at cult=26
+# list_All <- c(seq(28,95)) #got to 20 and broke , then broke on 27 (test, tes2??)
+list_All <- c(seq(60,95)) #at 3:24 in the morning stopped at 59...
+# [1] "files loaded:  ilots_2008_074.rda ilotsCult_2008_074.rda"
+# Error in x@polygons[[1]] : subscript out of bounds#note: still hasn't gotten to 94 etc
+
 
 ##########################################
 ### autoloads

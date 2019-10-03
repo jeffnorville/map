@@ -13,7 +13,6 @@ wd$output <- "C:/Users/Jeff Norville/Documents/R/map/output/"
 require(foreign)
 require(dplyr)
 require(sf)
-#motivation over sf and rpostgres etc https://journal.r-project.org/archive/2018/RJ-2018-025/RJ-2018-025.pdf
 require(rpostgis)
 library(dplyr)
 library(tidyr)
@@ -23,7 +22,6 @@ gethost     <- Sys.getenv("dbhost")
 getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
-
 
 # database
 con  <-  dbConnect("PostgreSQL",
@@ -37,9 +35,9 @@ con  <-  dbConnect("PostgreSQL",
 # define queries
 
 
-select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
-tbls_aropaj <- dbGetQuery(con, select_gtlist)
-liste_db_GT <- tbls_aropaj$table_name
+# select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
+# tbls_aropaj <- dbGetQuery(con, select_gtlist)
+# liste_db_GT <- tbls_aropaj$table_name
 
 # for each region
 sel_area_clc <- "select * from clc_mask_pra02336"
@@ -50,13 +48,24 @@ tbls_rpgpra02336 <- st_read(con, sel_area_rpg)
 tbls_clcpra02336 <- st_read(con, sel_area_clc)
 # ^^^^^^^^^^^^^^^^^^^all broken
 
-class(tbls_clcpra02336)
+# class(tbls_clcpra02336)
 tbls_clcpra02336 <- st_read(con, layer = "clc_mask_pra02336")
 tbls_rpgpra02336 <- st_read(con, layer = "rpg_mask_pra02336")
 
+class(tbls_rpgpra02336)
+plot(tbls_rpgpra02336$geom)
+head(tbls_rpgpra02336)
+summary(tbls_rpgpra02336)
+
 # this takes some time !!!!
-tbl_form1fromR <- st_union(tbls_clcpra02336, tbls_rpgpra02336, )
-plot(tbls_clcpra02336)
+# tbl_form1fromR <- st_union(tbls_clcpra02336, tbls_rpgpra02336, )
+# plot(tbls_clcpra02336)
+
+head(tbls_clcpra02336)
+summary(tbls_clcpra02336)
+
+
+
 
 query <- paste(
   'SELECT "name", "name_long", "geometry"',
@@ -85,7 +94,9 @@ require(rnaturalearth)
 require(ggplot2)
 require(dplyr)
 require(sf)
-# require(ggmap)
+
+
+
 ne_world <- rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
 # Choose one available to you
 world_map_crs <- "+init=epsg:4088" #"+proj=eqearth +wktext" #"+init=epsg:4088"
