@@ -53,17 +53,17 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfbled/", sep = "") #office
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfcolz/", sep = "") #office
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_surfauce/", sep = "") #leno
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
-# chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
+# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
+chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
 # chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-# chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
-# chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
+# chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
 
 #only used to output files
 ##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
@@ -84,8 +84,8 @@ liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder <- 39 # surfaufo
 # liste_colonnes_a_garder <- 21 # surfcolz
 # liste_colonnes_a_garder <- 13 #surfauce
-liste_colonnes_a_garder <- 201 #surfafsh
-liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
+# liste_colonnes_a_garder <- 201 ## which(names(table_compil)=='surfafsh')
+# liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
 keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surfavoi','surfauce','surfseig','surfriz','surfmais',
              'surfbett','surftaba','surfcoto','surflinc','surfcolz',
@@ -94,6 +94,7 @@ keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surfmafo','surfluze','surffpro','surfperm','surfaufo',
              'surfxxxx','surfener','surfgl49','surfmisc','surfswit',
              'surfeuca','surfrobi','surfpeup','surfsaul','surfafsh','popul','sauto')
+# which(names(table_compil)=='popul')
 # longer list
 
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
@@ -137,9 +138,10 @@ regions_cshell = c(100,10,112,113,114,115,116,121,131,132,133,134,135,136,141,15
 GT = list()
 GT.matrix = list()
 
+# TODO cleanup, don't need this now
 # liste des fichiers gtREG.dbf correspondant
-# liste_fichier_GT = list.files(path = chemin_GT,
-#                               pattern = paste("Gt", sep = ""))
+liste_fichier_GT = list.files(path = chemin_GT,
+                              pattern = paste("Gt", sep = ""))
 
 liste_db_GT <- tbls_aropaj$table_name
 
@@ -155,29 +157,32 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
 #let's load this from same postgresql con instead of filesystem !
 # get reg and shp here
-  for (gtid in liste_db_GT){
-    # gtid <- 'gt183' #debug
-    # GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-    GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
-    # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
-    reg <- gsub("gt", "", gtid)
-    # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
-    # faster to read in one table I suspect -- TODO write one big union
-    shp <- dbReadDataFrame(con, c("aropaj", paste0(reg, "_base")))
-    shp$geom <- NULL #RS-DBI driver warning: (unrecognized PostgreSQL field type geometry (id:27286) in column 3)
-    # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
-    GT[[gtid]] <- left_join(shp, GT[[gtid]], by = "gridcode")    
-    # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
-    GT.matrix[[gtid]] <- as.matrix(GT[[gtid]][(which(names(GT[[gtid]]) == "count") + 1):ncol(GT[[gtid]])]) # Spatialisation V5
-    # class(GT.matrix[[nom_gt]]) = "numeric"
-    # GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
-    # #on ne garde que GC et COUNT sur la version data frame
-    # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
-    GT[[gtid]] <- GT[[gtid]][c("gridcode","count")] #re-attach for indexing
-    #todo look into err msg, "R data frame definitions not found. Using standard import..."
-    print(paste("loaded db ", gtid))
-  }
+for (gtid in liste_db_GT){
+  # gtid <- 'gt183' #debug
+  # GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
+  GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
+  # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
+  reg <- gsub("gt", "", gtid)
+  # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
+  # faster to read in one table I suspect -- TODO write one big union
+  shp <- dbReadDataFrame(con, c("aropaj", paste0(reg, "_base")))
+  shp$geom <- NULL #RS-DBI driver warning: (unrecognized PostgreSQL field type geometry (id:27286) in column 3)
+  # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
+  GT[[gtid]] <- left_join(shp, GT[[gtid]], by = "gridcode")    
+  # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
+  # brings in extra field, gid.y from db; strip after loop?
+  GT.matrix[[gtid]] <- as.matrix(GT[[gtid]][(which(names(GT[[gtid]]) == "count") + 1):ncol(GT[[gtid]])]) # Spatialisation V5
   
+  # class(GT.matrix[[nom_gt]]) = "numeric"
+  # GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
+  # #on ne garde que GC et COUNT sur la version data frame
+  # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
+  GT[[gtid]] <- GT[[gtid]][c("gridcode","count")] #re-attach for indexing
+  #todo look into err msg, "R data frame definitions not found. Using standard import..."
+  print(paste("loaded db ", gtid))
+}
+
+# GT.matrix$gid.y <- NULL
 #}
 
 # GT.matrix is big
@@ -192,6 +197,27 @@ print("before names(GT)")
 names(GT) <- as.vector(sapply(names(GT), function(x) strsplit(x, "gt")[[1]][2]))
 names(GT.matrix) <- names(GT)
 
+# need to remove first col, gid.y
+# can't find this "gid.y" in list, so perhaps better to create new object
+# OR go into readDb function and sort it there faster?
+#  str(toto)
+# list.findi(toto, "gid.y")
+# toto2 <- setdiff(toto, "gid.y")
+# 
+# toto[[0]]
+# names
+# (toto)[0] <- NULL
+# names(toto)
+# class(toto)
+# rm(toto)
+# toto <- GT.matrix
+# toto <- toto[-1] # nope
+# summary(toto[1])
+# 
+# head(toto)
+# toto[[1]][[2]]
+# summary(toto)
+# 
 # lister les fichiers Ã  traiter -------------------------------------------
 
 # picking up aropaj outfiles for DB
@@ -221,16 +247,21 @@ dbDrop(con,
 # chargee de faire le gros du boulot : un produit matriciel
 # elle sera appelee dans la boucle situee plus bas dans le code
 
+#GT.matrix * able_reg_en_cours is broken ("non-conformable arguments")
+
 spatialisation = function(table_compil_reg_en_cours, GT, GT.matrix){
   # on initialise l'arc_simu avec GT et COUNT
-  arc_simu = cbind(GT$GRIDCODE, GT$COUNT)
+  # arc_simu = cbind(GT$GRIDCODE, GT$COUNT)
+  arc_simu <- cbind(GT$gridcode, GT$count)
   #on enleve l'info Reg e table_compil_reg_en_cours
   table_compil_reg_en_cours$Reg = NULL
   # on cree une matrice numerique e partir de table_compil_en_cours
-  table_compil_reg_en_cours = as.matrix(table_compil_reg_en_cours)
-  class(table_compil_reg_en_cours) = "numeric"
+  table_compil_reg_en_cours <- as.matrix(table_compil_reg_en_cours)
+  numtbl_compil_reg_en_cours <- as.numeric(table_compil_reg_en_cours)
+  numtbl_compil_reg_en_cours <- as.matrix(table_compil_reg_en_cours)
+  
   # on colle e notre base arc_simu le produit matriciel !!!
-  arc_simu = cbind(arc_simu, as.data.frame(GT.matrix %*% table_compil_reg_en_cours))
+  arc_simu = cbind(arc_simu, as.data.frame(GT.matrix %*% numtbl_compil_reg_en_cours))
   #on remet le bon nom des colonnes 1 et 2 qui se perd lors du bind
   names(arc_simu)[1:2] = c("GRIDCODE", "COUNT")
   # on renvoie le arc_simu cree
@@ -250,7 +281,7 @@ if (length(fichiers) != 0){
     print(paste("traitement de ", fichier))
     print(paste("liste_colonnes_a_garder ", liste_colonnes_a_garder))
     print(paste("keepers ", keepers))
-        
+    
     #check to see if file went through "mis a propre" script or not:
     filename <- paste(chemin_table_compil, fichier, sep = "")
     firstline <- readLines(filename, 1L)
@@ -271,9 +302,9 @@ if (length(fichiers) != 0){
       table_compil <- table_compil[,-colonnes_a_supprimer]
       # on va jusqu'a reg  et on prend aussi  sauto + popul + idtypo
       table_compil <- table_compil[,c(1:which(names(table_compil) == "Reg"),
-                                     which(names(table_compil) == "popul"),
-                                     which(names(table_compil) == "sauto"),
-                                     which(names(table_compil) == "id_typo"))]
+                                      which(names(table_compil) == "popul"),
+                                      which(names(table_compil) == "sauto"),
+                                      which(names(table_compil) == "id_typo"))]
       # on rajoute surf_tot
       table_compil$surf_tot <- as.numeric(as.vector(table_compil$popul))*as.numeric(as.vector(table_compil$sauto))
       
@@ -290,8 +321,6 @@ if (length(fichiers) != 0){
       print(paste("unexpected file format in ", filename))
     }
     
-    # hist(table_compil$surfperm)
-    
     #NB unit change here
     # Error: $ operator is invalid for atomic vectors
     #this error comes when df doesn't have names(table_compile) - depending on aropaj run there could be two file formats, clean or uncleaned
@@ -299,13 +328,12 @@ if (length(fichiers) != 0){
     # table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
     # v1 <- table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
     table_compil[,keepers] <- table_compil[,keepers]/(table_compil$sauto*table_compil$popul)
-
+    
     # on en extrait la sous-partie que l'utilisateur nous a demande de garder
     # ainsi que reg dont on aura besoin
-    table_compil = table_compil[,c(keepers, 
-                                   which(names(table_compil) == "Reg"))] #why using indexes?
-    
-    # table_compil$Reg <- table_compil$Reg # TODO FIX HERE
+    table_compil <- table_compil[,c(keepers, "Reg")]
+    # table_compil = table_compil[,c(keepers, 
+    #                                which(names(table_compil) == "Reg"))]
     
     # on repere les differentes regions e traiter           
     regions_table_compil = unique(table_compil$Reg) #dplyr intersect does unique() in the next step anyway?
