@@ -57,7 +57,7 @@ chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testa
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+# chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
 # chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
 
 # V5 : chemin vers les shapefiles
@@ -138,8 +138,8 @@ GT = list()
 GT.matrix = list()
 
 # liste des fichiers gtREG.dbf correspondant
-liste_fichier_GT = list.files(path = chemin_GT,
-                              pattern = paste("Gt", sep = ""))
+# liste_fichier_GT = list.files(path = chemin_GT,
+#                               pattern = paste("Gt", sep = ""))
 
 liste_db_GT <- tbls_aropaj$table_name
 
@@ -208,7 +208,7 @@ aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
 aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
 
 print(paste("drop existing table ", aropajsimname))
-#TODO check if table exists, overwrite if so
+# check if table exists, overwrite if so
 # if dbexiststable(con, paste(tomap, aropajsimname)
 #dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
 dbDrop(con,
@@ -222,28 +222,20 @@ dbDrop(con,
 # elle sera appelee dans la boucle situee plus bas dans le code
 
 spatialisation = function(table_compil_reg_en_cours, GT, GT.matrix){
-  
   # on initialise l'arc_simu avec GT et COUNT
   arc_simu = cbind(GT$GRIDCODE, GT$COUNT)
-  
   #on enleve l'info Reg e table_compil_reg_en_cours
   table_compil_reg_en_cours$Reg = NULL
-  
   # on cree une matrice numerique e partir de table_compil_en_cours
   table_compil_reg_en_cours = as.matrix(table_compil_reg_en_cours)
   class(table_compil_reg_en_cours) = "numeric"
-  
   # on colle e notre base arc_simu le produit matriciel !!!
   arc_simu = cbind(arc_simu, as.data.frame(GT.matrix %*% table_compil_reg_en_cours))
-  
   #on remet le bon nom des colonnes 1 et 2 qui se perd lors du bind
   names(arc_simu)[1:2] = c("GRIDCODE", "COUNT")
-  
   # on renvoie le arc_simu cree
   return(arc_simu)
-  
 } # fin fonction de spatialisation
-
 
 # spatialisation fichier par fichier ---------------------------------------
 
@@ -257,7 +249,8 @@ if (length(fichiers) != 0){
     
     print(paste("traitement de ", fichier))
     print(paste("liste_colonnes_a_garder ", liste_colonnes_a_garder))
-    
+    print(paste("keepers ", keepers))
+        
     #check to see if file went through "mis a propre" script or not:
     filename <- paste(chemin_table_compil, fichier, sep = "")
     firstline <- readLines(filename, 1L)
@@ -271,9 +264,22 @@ if (length(fichiers) != 0){
                                 strip.white = TRUE,
                                 header = TRUE,
                                 fill = TRUE)
+      # on met les bon noms des premieres colonnes
+      names(table_compil)[1:4] <- c("pays", "gt", "param1", "param2")
+      # on repere les colonnes avec un nom "nul" (de type "X.") et on les supprime
+      colonnes_a_supprimer <- which(grepl("X[.]", names(table_compil)))
+      table_compil <- table_compil[,-colonnes_a_supprimer]
+      # on va jusqu'a reg  et on prend aussi  sauto + popul + idtypo
+      table_compil <- table_compil[,c(1:which(names(table_compil) == "Reg"),
+                                     which(names(table_compil) == "popul"),
+                                     which(names(table_compil) == "sauto"),
+                                     which(names(table_compil) == "id_typo"))]
+      # on rajoute surf_tot
+      table_compil$surf_tot <- as.numeric(as.vector(table_compil$popul))*as.numeric(as.vector(table_compil$sauto))
+      
     }
     else if (identical(substr(firstline, 1, 4), "pays")){
-      print(paste("cleaned ", filename, ", reading from 1ere line"))
+      print(paste("file ", filename, " already cleaned, reading from 1ere line"))
       table_compil = read.table(filename, 
                                 sep = ":",
                                 strip.white = TRUE,
@@ -286,38 +292,20 @@ if (length(fichiers) != 0){
     
     # hist(table_compil$surfperm)
     
-    # si on en est au premier table compil
-    # ecrire la liste des variables en .txt
-     # if (fichier == fichiers[1]){
-     # var = names(table_compil)[liste_colonnes_a_garder]
-     # for (i in 1:length(var)){
-     #   var[i] = paste(i, "=", var[i], sep = "")
-     #   }
-     # write.table(var, file = "arc_simu/liste_variables.txt", sep = ":")
-     # }
-    
     #NB unit change here
     # Error: $ operator is invalid for atomic vectors
     #this error comes when df doesn't have names(table_compile) - depending on aropaj run there could be two file formats, clean or uncleaned
     # on met tout en par hectare en divisant par surf_tot !!!
-    table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
-    
-
-    #TODO use dplyr
-    # toto <- select(table_compil, lables)
-hist(toto$margbrut)
-hist(toto$surfauce)
-hist(toto$surfperm)
-hist(toto$surfmais)
-barplot(toto$surfperm)
-barplot(toto$surfauce)
-
-
+    # table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
+    # v1 <- table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
+    table_compil[,keepers] <- table_compil[,keepers]/(table_compil$sauto*table_compil$popul)
 
     # on en extrait la sous-partie que l'utilisateur nous a demande de garder
     # ainsi que reg dont on aura besoin
-    table_compil = table_compil[,c(liste_colonnes_a_garder, 
-                                   which(names(table_compil) == "reg"))] #Reg? reg?
+    table_compil = table_compil[,c(keepers, 
+                                   which(names(table_compil) == "Reg"))] #why using indexes?
+    
+    # table_compil$Reg <- table_compil$Reg # TODO FIX HERE
     
     # on repere les differentes regions e traiter           
     regions_table_compil = unique(table_compil$Reg) #dplyr intersect does unique() in the next step anyway?
@@ -341,9 +329,9 @@ barplot(toto$surfauce)
                                   GT.matrix[[which(names(GT.matrix) == region)]])
         
         # on ecrit le fichier arc_simu
-        nom_arc_simu = strsplit(fichier, split = "compil")[[1]][2]
-        nom_arc_simu = strsplit(nom_arc_simu, split = "[.]txt")[[1]][1]
-        nom_arc_simu = paste("Arc", nom_arc_simu, ".region", region, ".csv", sep = "")
+        # nom_arc_simu = strsplit(fichier, split = "compil")[[1]][2]
+        # nom_arc_simu = strsplit(nom_arc_simu, split = "[.]txt")[[1]][1]
+        # nom_arc_simu = paste("Arc", nom_arc_simu, ".region", region, ".csv", sep = "")
         
         #substr just simulation series out
         simulation_seq <- substr(fichier, nchar(fichier)-7, nchar(fichier)-6)
@@ -364,6 +352,8 @@ barplot(toto$surfauce)
         arc_simu$region <- region
         # add column w realisation sequence
         arc_simu$simul <- simulation_seq
+        #TODO add data/time etc here
+        arc_simu$timestamp <- as.POSIXct(Sys.time())
         
         pgInsert(con, 
                  c("tomap",aropajsimname), 
