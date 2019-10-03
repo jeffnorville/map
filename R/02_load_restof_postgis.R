@@ -62,8 +62,7 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 # list_Picardie <-  c(2, 60, 80)
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
-list_All <- c(seq(21,95))#got to 20 and broke 
-
+list_All <- c(seq(28,95))#got to 20 and broke ; broke again at cult=26
 
 ##########################################
 ### autoloads
@@ -77,6 +76,7 @@ for (dept in list_All){
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   
     if (file.exists(paste0(sourcedata, ilots_to_add))){
+      print(paste("trying to load ", paste(ilots_to_add, " in dept ", dept)))   
     
       ilot <- load(paste0(sourcedata, ilots_to_add))
       ilot <- get(ilot)
@@ -100,6 +100,7 @@ for (dept in list_All){
                df.geom = NULL,
                geog = FALSE)
       
+      print(paste("loaded ", ilots_to_add, " retilot: ", retilot))
       # culture file must exist too
       cultures_to_add <- paste("ilotsCult_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
       culture <- load(paste0(sourcedata, cultures_to_add))
@@ -121,7 +122,8 @@ for (dept in list_All){
                return.pgi = FALSE, 
                df.geom = NULL,
                geog = FALSE)
-    
+      print(paste("loaded ", cultures_to_add, " retcult: ", retcult))
+      
     } # end if file.exists 
   
   
