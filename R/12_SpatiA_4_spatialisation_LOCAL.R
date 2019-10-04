@@ -15,11 +15,17 @@ username <- Sys.getenv("user")
 password <- Sys.getenv("passwd")
 
 # database
+gethost     <- Sys.getenv("dbhost")
+getdbname <- Sys.getenv("dbname")
+getusername <- Sys.getenv("user")
+getpassword <- Sys.getenv("passwd")
+
+# database
 con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal',
-                   host   = 'localhost',
-                   user   = username,
-                   password = password) # pull from ini file
+                   dbname = getdbname,
+                   host   = gethost,
+                   user   = getusername,
+                   password = getpassword)
 # isPostgresqlIdCurrent(con) #boolean
 
 # PATHS !
@@ -43,12 +49,25 @@ chemin_arc_simu = paste(".", "/data/arc_simu", sep = "")
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
-# colonne 7 : margbrut et 175 : consengrais par exemple
-liste_colonnes_a_garder = c(32)
-# On decale de 6 pour coller avec la liste des variables a traiter
-liste_colonnes_a_garder = liste_colonnes_a_garder + 6
+keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
+             'surfavoi','surfauce','surfseig','surfriz','surfmais',
+             'surfbett','surftaba','surfcoto','surflinc','surfcolz',
+             'surftour','surfsoja','surfprot','surffeve','surflgsv',
+             'surffric','surfgelv','surfpdtr','surflegf','surfbtfo',
+             'surfmafo','surfluze','surffpro','surfperm','surfaufo',
+             'surfxxxx','surfener','surfgl49','surfmisc','surfswit',
+             'surfeuca','surfrobi','surfpeup','surfsaul','surfafsh','popul','sauto')
 
-#liste_colonnes_a_garder = c(7:50, 100:118, 148:150, 172:175)
+
+# colonne 7 : margbrut et 175 : consengrais par exemple
+# liste_colonnes_a_garder = c(32)
+# On decale de 6 pour coller avec la liste des variables a traiter
+# liste_colonnes_a_garder = liste_colonnes_a_garder + 6
+# based on list variables aropaj.xlsx
+liste_colonnes_a_garder <- c(7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 173, 178, 179, 180, 181, 182, 183)
+# liste_colonnes_a_garder = c(7:50, 100:118, 148:150, 172:175)
+
+
 # ecriture d'un petit fichier dans arc_simu pour onserver la liste des variables
 
 
@@ -148,6 +167,11 @@ spatialisation = function(table_compil_reg_en_cours, GT, GT.matrix){
   
 } # fin fonction de spatialisation
 
+dbDrop(con,
+       name = c("tomap", "temp"),
+       type = "table",
+       ifexists = TRUE, #Do not throw an error if the object does not exist. A notice is issued in this case
+       exec = TRUE)
 
 # spatialisation fichier par fichier ---------------------------------------
 
@@ -182,6 +206,7 @@ if (length(fichiers) != 0){
     
     # on en extrait la sous-partie que l'utilisateur nous a demande de garder
     # ainsi que reg dont on aura besoin
+    # table_compil <- table_compil[,c(keepers, "Reg")]
     table_compil = table_compil[,c(liste_colonnes_a_garder, 
                                    which(names(table_compil) == "Reg"))]
     
@@ -223,7 +248,7 @@ if (length(fichiers) != 0){
         #TODO have to add REGION to dataframe
         arc_simu$region <- region
         pgInsert(con, 
-                 c("aropaj","temp"), 
+                 c("tomap","temp"), 
                  arc_simu, 
                  geom = FALSE, 
                  df.mode = TRUE, #was FALSE
