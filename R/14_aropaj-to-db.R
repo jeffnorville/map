@@ -156,11 +156,18 @@ liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 #if (!exists(liste_fichier_GT)) {}
 
 #let's load this from same postgresql con instead of filesystem !
+# define queries
+# select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
+# tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # get reg and shp here
 for (gtid in liste_db_GT){
   # gtid <- 'gt183' #debug
   # GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-  GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
+  # GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
+  qry_build_gt_matrix <- paste0("SELECT * FROM aropaj.", gtid, "; ")
+  tmp <- dbGetQuery(con, qry_build_gt_matrix)
+  tmp$gid <- NULL
+  GT[[gtid]] <- tmp
   # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
   reg <- gsub("gt", "", gtid)
   # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
