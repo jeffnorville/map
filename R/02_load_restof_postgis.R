@@ -17,7 +17,7 @@ require(rgdal)
 #nb - rstudio picks up from .renviron file at launch of program - variable cannot be redefined w/o relaunch (or at least reload) of .renviron file
 #point of this is to keep passwords, etc, unique to local instance of program (and off of source control evidently)
 gethost     <- Sys.getenv("dbhost")
-getdbname <- Sys.getenv("dbname")
+getdbname   <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
 con  <-  dbConnect("PostgreSQL",
@@ -71,6 +71,8 @@ list_All <- c(seq(78,95)) #at 3:24 in the morning stopped at 59...
 # or set partial.match = TRUE to only insert to matching colunns.
 # 77 said   2 column(s) in data frame are missing in database table (Centre_X, Centre_Y)
 
+# TODO 
+
 
 
 ##########################################
@@ -95,6 +97,7 @@ for (dept in list_All){
       ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
       ilot$sourcefile <- ilots_to_add               # add filename
       ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
+      # retilot <- FALSE
       retilot <- pgInsert(con,                                 # load to DB
                c(schema,"ilots"), 
                ilot,
