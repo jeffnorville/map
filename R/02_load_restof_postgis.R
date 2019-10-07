@@ -63,15 +63,16 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 # list_All <- c(seq(28,95)) #got to 20 and broke , then broke on 27 (test, tes2??)
-list_All <- c(seq(9,17)) #at 3:24 in the morning stopped at 59...
+list_All <- c(seq(1,20)) # debugging on vega, string issue? only have dept 21 - 94 loaded
+
+
+#at 3:24 in the morning stopped at 59...
 # [1] "files loaded:  ilots_2008_074.rda ilotsCult_2008_074.rda"
 # Error in x@polygons[[1]] : subscript out of bounds
 # ... because ilots_2008_075.rda has zero records
 # ilots_2008_076.rda 2 column(s) in data frame are missing in database table (Centre_X, Centre_Y). Rename data frame columns 
 # or set partial.match = TRUE to only insert to matching colunns.
 # 77 said   2 column(s) in data frame are missing in database table (Centre_X, Centre_Y)
-
-# TODO 
 
 ##########################################
 ### autoloads
@@ -81,7 +82,6 @@ schema <- "load" # was public
 
 for (dept in list_All){
   #GEOMetry first
-  
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   print(paste("to load: ", ilots_to_add))
   df <- file.info(paste0(sourcedata, ilots_to_add))
