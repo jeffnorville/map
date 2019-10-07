@@ -23,3 +23,6 @@ Following the convention recommendations here:
 
 
 ![map of missing geom load.ilots depts](docimg/missingdepts.png)
+
+![2nd map of missing geom load.ilots depts](docimg/missingdepts02.png)
+
