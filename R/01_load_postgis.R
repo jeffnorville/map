@@ -2,7 +2,7 @@
 
 ## NB passwords in plaintext on git are a liability (even if DBs are local)
 
-rm(list=ls())
+# rm(list=ls())
 
 library(rpostgis)
 
@@ -11,40 +11,89 @@ library(rpostgis)
 #                    host   = 'localhost',
 #                    user   = 'pgisuser',
 #                    password = 'mine')
+gethost     <- Sys.getenv("dbhost")
+getdbname   <- Sys.getenv("dbname")
+getusername <- Sys.getenv("user")
+getpassword <- Sys.getenv("passwd")
 
 con  <-  dbConnect("PostgreSQL",
-                   dbname = 'api2',
-                   host   = 'localhost',
-                   user   = 'pgisuser',
-                   password = 'mine')
-
-con  <-  dbConnect("PostgreSQL",
-                   dbname = 'apismal',
-                   host   = 'localhost',
-                   user   = 'postgres',
-                   password = 'mine')
-
-
-con  <-  dbConnect("PostgreSQL",
-                   dbname = 'postgres',
-                   host   = 'localhost',
-                   user   = 'postgres',
-                   password = 'alsomine')
-
-
+                   dbname = getdbname,
+                   host   = gethost,
+                   user   = getusername,
+                   password = getpassword)
 
 pgPostGIS(con)
 #PostGIS extension version 2.5.1 installed.
 #[1] TRUE
 
-###load by department
+## test files which didn't autoload: 60?; 75; 76; 77
+# load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_059.rda")
+# load("C:/opt/donnees_R/RPG/V2/ilots_2008_059.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_075.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_075.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_076.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_076.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_077.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_077.rda")
 
-rdaCultFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilotsCult*")
-rdaIlotFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilots_20*")
-rm(rdaIlotFiles)
+plot(ilots_2008_059) # okay
+plot(ilots_2008_075) # empty
+plot(ilots_2008_076) # okay
+plot(ilots_2008_077) # okay
 
-rdaCultFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilotsCult*")
-rdaIlotFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilots_20*")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_002.rda")
+load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_008.rda")
+load("C:/opt/donnees_R/RPG/V2/ilots_2008_008.rda")
+
+
+## conversion
+ilots_2008_059 <- spTransform(ilots_2008_059, "+init=epsg:3035")
+ilots_2008_002 <- spTransform(ilots_2008_002, "+init=epsg:3035")
+ilots_2008_008 <- spTransform(ilots_2008_008, "+init=epsg:3035")
+summary(ilots_2008_008)
+
+## as.numeric
+ilots_2008_059$ID_ILOT <- as.numeric(ilots_2008_059$ID_ILOT)
+ilots_2008_002$ID_ILOT <- as.numeric(ilots_2008_002$ID_ILOT)
+ilots_2008_008$ID_ILOT <- as.numeric(ilots_2008_008$ID_ILOT)
+
+##load ilots geometry file (consider optimistic)
+pgInsert(con, 
+         c("load","ilots"), 
+         ilots_2008_008, 
+         geom = "geom", 
+         df.mode = FALSE,
+         partial.match = FALSE, 
+         overwrite = FALSE, 
+         new.id = NULL,
+         row.names = FALSE, 
+         upsert.using = NULL, 
+         alter.names = FALSE,
+         encoding = NULL, 
+         return.pgi = FALSE, 
+         df.geom = NULL,
+         geog = FALSE)
+
+##load culture file (already loaded maybe??)
+pgInsert(con, 
+         c("load","culture"), 
+         ilotsCult_2008_008,
+         geom = FALSE, 
+         df.mode = FALSE,
+         partial.match = FALSE, 
+         overwrite = FALSE, 
+         new.id = NULL,
+         row.names = FALSE, 
+         upsert.using = NULL, 
+         alter.names = FALSE,
+         encoding = NULL, 
+         return.pgi = FALSE, 
+         df.geom = NULL,
+         geog = FALSE)
+
+
+
 
 #load Picardie (002, 060, 080)
 load("C:/opt/donnees_R/RPG/V2/ilotsCult_2008_002.rda")
@@ -322,4 +371,12 @@ pgInsert(con,
          return.pgi = FALSE, 
          df.geom = NULL,
          geog = FALSE)
+
+### OLD load by department
+rdaCultFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilotsCult*")
+rdaIlotFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilots_20*")
+rm(rdaIlotFiles)
+
+rdaCultFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilotsCult*")
+rdaIlotFiles <- list.files(path = "C:/opt/donnees_R/RPG/V2", pattern = "ilots_20*")
 

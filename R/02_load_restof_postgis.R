@@ -17,7 +17,7 @@ require(rgdal)
 #nb - rstudio picks up from .renviron file at launch of program - variable cannot be redefined w/o relaunch (or at least reload) of .renviron file
 #point of this is to keep passwords, etc, unique to local instance of program (and off of source control evidently)
 gethost     <- Sys.getenv("dbhost")
-getdbname <- Sys.getenv("dbname")
+getdbname   <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
 con  <-  dbConnect("PostgreSQL",
@@ -63,13 +63,15 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 # list_All <- c(seq(28,95)) #got to 20 and broke , then broke on 27 (test, tes2??)
-list_All <- c(seq(78,95)) #at 3:24 in the morning stopped at 59...
+list_All <- c(seq(9,17)) #at 3:24 in the morning stopped at 59...
 # [1] "files loaded:  ilots_2008_074.rda ilotsCult_2008_074.rda"
 # Error in x@polygons[[1]] : subscript out of bounds
 # ... because ilots_2008_075.rda has zero records
 # ilots_2008_076.rda 2 column(s) in data frame are missing in database table (Centre_X, Centre_Y). Rename data frame columns 
 # or set partial.match = TRUE to only insert to matching colunns.
 # 77 said   2 column(s) in data frame are missing in database table (Centre_X, Centre_Y)
+
+# TODO 
 
 ##########################################
 ### autoloads
@@ -94,6 +96,7 @@ for (dept in list_All){
       ilot <- spTransform(ilot, "+init=epsg:3035")  # reproject
       ilot$sourcefile <- ilots_to_add               # add filename
       ilot$timestamp <- as.POSIXct(Sys.time())      # add timestamp
+      # retilot <- FALSE
       retilot <- pgInsert(con,                                 # load to DB
                c(schema,"ilots"), 
                ilot,
