@@ -63,7 +63,7 @@ sourcedata = "C:/opt/donnees_R/RPG/V2/"
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 # list_All <- c(seq(28,95)) #got to 20 and broke , then broke on 27 (test, tes2??)
-list_All <- c(seq(78,95)) #at 3:24 in the morning stopped at 59...
+list_All <- c(seq(9,17)) #at 3:24 in the morning stopped at 59...
 # [1] "files loaded:  ilots_2008_074.rda ilotsCult_2008_074.rda"
 # Error in x@polygons[[1]] : subscript out of bounds
 # ... because ilots_2008_075.rda has zero records
