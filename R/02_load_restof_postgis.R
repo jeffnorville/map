@@ -30,8 +30,8 @@ con  <-  dbConnect("PostgreSQL",
 
 
 # sept 2019 cleaning up for final repo
-sourcedata = "C:/opt/donnees_R/RPG/V2/"
-# sourcedata = "/opt/donnees_R/RPG/V2/"# vega
+# sourcedata = "C:/opt/donnees_R/RPG/V2/"
+sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 
 
 # scenarios de ref
@@ -63,17 +63,16 @@ sourcedata = "C:/opt/donnees_R/RPG/V2/"
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 # list_All <- c(seq(28,95)) #got to 20 and broke , then broke on 27 (test, tes2??)
-list_All <- c(seq(9,17)) #at 3:24 in the morning stopped at 59...
+list_All <- c(seq(1,20)) # debugging on vega, string issue? only have dept 21 - 94 loaded
+
+
+#at 3:24 in the morning stopped at 59...
 # [1] "files loaded:  ilots_2008_074.rda ilotsCult_2008_074.rda"
 # Error in x@polygons[[1]] : subscript out of bounds
 # ... because ilots_2008_075.rda has zero records
 # ilots_2008_076.rda 2 column(s) in data frame are missing in database table (Centre_X, Centre_Y). Rename data frame columns 
 # or set partial.match = TRUE to only insert to matching colunns.
 # 77 said   2 column(s) in data frame are missing in database table (Centre_X, Centre_Y)
-
-# TODO 
-
-
 
 ##########################################
 ### autoloads
@@ -83,14 +82,14 @@ schema <- "load" # was public
 
 for (dept in list_All){
   #GEOMetry first
-  
   ilots_to_add <- paste0("ilots_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
   print(paste("to load: ", ilots_to_add))
   df <- file.info(paste0(sourcedata, ilots_to_add))
   size <- df$size # PI,  file.info("ilots_2008_075.rda") said size=403
   
     if (file.exists(paste0(sourcedata, ilots_to_add)) && size > 1000){
-    
+      print(paste("trying to load ", paste(ilots_to_add, " in dept ", dept)))   
+
       ilot <- load(paste0(sourcedata, ilots_to_add))
       ilot <- get(ilot)
       ilot$ID_ILOT <- as.numeric(ilot$ID_ILOT)      # make keys match better in DB
@@ -114,6 +113,7 @@ for (dept in list_All){
                df.geom = NULL,
                geog = FALSE)
       
+      print(paste("loaded ", ilots_to_add, " retilot: ", retilot))
       # culture file must exist too
       cultures_to_add <- paste("ilotsCult_2008_", str_pad(dept, 3, side="left", pad = "0"), ".rda", sep="")
       culture <- load(paste0(sourcedata, cultures_to_add))
@@ -135,7 +135,8 @@ for (dept in list_All){
                return.pgi = FALSE, 
                df.geom = NULL,
                geog = FALSE)
-    
+      print(paste("loaded ", cultures_to_add, " retcult: ", retcult))
+      
     } # end if file.exists 
   
   
