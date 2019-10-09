@@ -10,9 +10,19 @@ This repo was developed under API-SMAL project to combine RPG data, CLC data, an
 
 Organize above objects it in a postgresql database with postgis extension.
 
-Following the convention recommendations here:
+  
+## File inventory
 
-  https://richpauloo.github.io/2018-10-17-How-to-keep-your-R-projects-organized/
+01_load_postgis.R
+
+02_load_restof_postgis.R
+
+03_formalize
+
+04_animation
+10_SpatiA_3_fonctn.R
+
+
   
 ### Results:
 
@@ -26,3 +36,10 @@ Following the convention recommendations here:
 
 ![2nd map of missing geom load.ilots depts](docimg/missingdepts02.png)
 
+
+
+### Standards
+
+Following the convention recommendations here:
+
+  https://richpauloo.github.io/2018-10-17-How-to-keep-your-R-projects-organized/
