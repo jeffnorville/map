@@ -48,11 +48,6 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-04-23/test/TABLECOMPIL/", sep = "") #off, load1 = surfperm
-#chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_load2/", sep = "") #off, load2 = margbrut
-# chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfbled/", sep = "") #office
-# chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-05-21/TABLECOMPIL_surfcolz/", sep = "") #office
-# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL_surfauce/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
 chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 
@@ -65,10 +60,6 @@ chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "
 # chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
 chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
 
-#only used to output files
-##chemin_arc_simu = paste("CHEMIN", "/arc_simu", sep = "")
-#chemin_arc_simu = paste(".", "/data/arc_simu", sep = "")
-
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
@@ -77,8 +68,6 @@ chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES
 liste_colonnes_a_garder = c(32)
 liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder = c(32)
-
-# liste_colonnes_a_garder <- 7 #forcing margbrut
 # liste_colonnes_a_garder <- 8 #forcing surfbled
 # liste_colonnes_a_garder <- 38 #forcing surfperm
 # liste_colonnes_a_garder <- 39 # surfaufo
@@ -86,6 +75,7 @@ liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder <- 13 #surfauce
 # liste_colonnes_a_garder <- 201 ## which(names(table_compil)=='surfafsh')
 # liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
+# do this a little cleaner?
 keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surfavoi','surfauce','surfseig','surfriz','surfmais',
              'surfbett','surftaba','surfcoto','surflinc','surfcolz',
@@ -95,8 +85,7 @@ keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surfxxxx','surfener','surfgl49','surfmisc','surfswit',
              'surfeuca','surfrobi','surfpeup','surfsaul','surfafsh','popul','sauto')
 # which(names(table_compil)=='popul')
-# longer list
-
+# longer list -- ATTN this can change !
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"
 # [9] "surfblet" "surforgh" "surforgp" "surfavoi" "surfauce" "surfseig" "surfriz"  "surfmais"
 # [17] "surfbett" "surftaba" "surfcoto" "surflinc" "surfcolz" "surftour" "surfsoja" "surfprot"
@@ -152,48 +141,29 @@ test = as.numeric(test)
 indices_a_garder = which(test %in% regions_cshell)
 liste_fichier_GT = liste_fichier_GT[indices_a_garder]
 
-# add test: if these are loaded already, skip it?
-#if (!exists(liste_fichier_GT)) {}
-
 #let's load this from same postgresql con instead of filesystem !
 # define queries
 # select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
 # tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # get reg and shp here
 for (gtid in liste_db_GT){
-  # gtid <- 'gt183' #debug
-  # GT[[nom_gt]] = read.dbf(file = paste(chemin_GT, nom_gt, sep = "/")) #au cas oe plusieurs fichiers...
-  # GT[[gtid]] <- dbReadDataFrame(con, c("aropaj", gtid)) #au cas oe plusieurs fichiers...    
   qry_build_gt_matrix <- paste0("SELECT * FROM aropaj.", gtid, "; ")
   tmp <- dbGetQuery(con, qry_build_gt_matrix)
   tmp$gid <- NULL
   GT[[gtid]] <- tmp
-  # reg = gsub(".dbf", "", gsub("Gt", "", nom_gt))
   reg <- gsub("gt", "", gtid)
-  # shp = read.dbf(paste0(chemin_shp, reg, "_base.dbf"))
   # faster to read in one table I suspect -- TODO write one big union
   shp <- dbReadDataFrame(con, c("aropaj", paste0(reg, "_base")))
   shp$geom <- NULL #RS-DBI driver warning: (unrecognized PostgreSQL field type geometry (id:27286) in column 3)
-  # GT[[nom_gt]] = left_join(shp, GT[[nom_gt]], by = "GRIDCODE")
   GT[[gtid]] <- left_join(shp, GT[[gtid]], by = "gridcode")    
-  # GT.matrix[[nom_gt]] = as.matrix(GT[[nom_gt]][(which(names(GT[[nom_gt]]) == "COUNT") + 1):ncol(GT[[nom_gt]])]) # Spatialisation V5
-  # brings in extra field, gid.y from db; strip after loop?
+  # brings in extra field, gid.y from db; strip ?
   GT.matrix[[gtid]] <- as.matrix(GT[[gtid]][(which(names(GT[[gtid]]) == "count") + 1):ncol(GT[[gtid]])]) # Spatialisation V5
   
-  # class(GT.matrix[[nom_gt]]) = "numeric"
-  # GT.matrix[[nom_gt]] <- as.numeric(GT.matrix[[nom_gt]])
-  # #on ne garde que GC et COUNT sur la version data frame
-  # GT[[nom_gt]] = GT[[nom_gt]][c("GRIDCODE","COUNT")]
   GT[[gtid]] <- GT[[gtid]][c("gridcode","count")] #re-attach for indexing
-  #todo look into err msg, "R data frame definitions not found. Using standard import..."
   print(paste("loaded db ", gtid))
 }
 
-# GT.matrix$gid.y <- NULL
-#}
-
 # GT.matrix is big
-
 print("before names(GT)")
 
 # on met des names de GT correspondant au fichier lu
@@ -204,34 +174,12 @@ print("before names(GT)")
 names(GT) <- as.vector(sapply(names(GT), function(x) strsplit(x, "gt")[[1]][2]))
 names(GT.matrix) <- names(GT)
 
-# need to remove first col, gid.y
-# can't find this "gid.y" in list, so perhaps better to create new object
-# OR go into readDb function and sort it there faster?
-#  str(toto)
-# list.findi(toto, "gid.y")
-# toto2 <- setdiff(toto, "gid.y")
-# 
-# toto[[0]]
-# names
-# (toto)[0] <- NULL
-# names(toto)
-# class(toto)
-# rm(toto)
-# toto <- GT.matrix
-# toto <- toto[-1] # nope
-# summary(toto[1])
-# 
-# head(toto)
-# toto[[1]][[2]]
-# summary(toto)
-# 
-# lister les fichiers Ã  traiter -------------------------------------------
-
 # picking up aropaj outfiles for DB
 fichiers = list.files(path = chemin_table_compil,
                       pattern = "table.compil")
 fichiers = fichiers[which(grepl(".txt", fichiers))]
 
+# this is a bit ugly - depends on filenames coming in, call it Hack v0.1?
 # get the unique name of this aropaj run from filename
 aropajsimname <- fichiers[1] #from first file
 aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
@@ -242,8 +190,6 @@ aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
 
 print(paste("drop existing table ", aropajsimname))
 # check if table exists, overwrite if so
-# if dbexiststable(con, paste(tomap, aropajsimname)
-#dbDrop(conn, name, type = c("table", "schema", "view","materialized view"), ifexists = FALSE, cascade = FALSE,display = TRUE, exec = TRUE)
 dbDrop(con,
        name = c("tomap", aropajsimname),
        type = "table",
@@ -253,8 +199,6 @@ dbDrop(con,
 # creation d'une fonction de spatialisation -------------------------------
 # chargee de faire le gros du boulot : un produit matriciel
 # elle sera appelee dans la boucle situee plus bas dans le code
-
-#GT.matrix * able_reg_en_cours is broken ("non-conformable arguments")
 
 spatialisation = function(table_compil_reg_en_cours, GT, GT.matrix){
   # on initialise l'arc_simu avec GT et COUNT
@@ -276,7 +220,6 @@ spatialisation = function(table_compil_reg_en_cours, GT, GT.matrix){
 } # fin fonction de spatialisation
 
 # spatialisation fichier par fichier ---------------------------------------
-
 print("before parsing textfiles")
 # on test si "fichiers" n'est pas de longueur nulle
 if (length(fichiers) != 0){
@@ -329,11 +272,10 @@ if (length(fichiers) != 0){
     }
     
     #NB unit change here
-    # Error: $ operator is invalid for atomic vectors
-    #this error comes when df doesn't have names(table_compile) - depending on aropaj run there could be two file formats, clean or uncleaned
+    # if you see  Error: $ operator is invalid for atomic vectors
+    # ... this error comes when df doesn't have names(table_compile) - depending on aropaj run there could be two file formats, clean or uncleaned
     # on met tout en par hectare en divisant par surf_tot !!!
     # table_compil[,liste_colonnes_a_garder] =  table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
-    # v1 <- table_compil[,liste_colonnes_a_garder]/(table_compil$sauto*table_compil$popul)
     table_compil[,keepers] <- table_compil[,keepers]/(table_compil$sauto*table_compil$popul)
     
     # on en extrait la sous-partie que l'utilisateur nous a demande de garder
@@ -387,7 +329,7 @@ if (length(fichiers) != 0){
         arc_simu$region <- region
         # add column w realisation sequence
         arc_simu$simul <- simulation_seq
-        #TODO add data/time etc here
+        # add data/time etc here
         arc_simu$timestamp <- as.POSIXct(Sys.time())
         
         pgInsert(con, 
