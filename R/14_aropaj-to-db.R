@@ -49,17 +49,19 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
-chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
+# chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
+chemin_table_compil = paste("/home/jnorville/aropaj_tablecompil/", sep = "") #vega
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
 # chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+# chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
+chemin_GT = paste("/home/jnorville/miraj/probaGT/", sep = "")
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
 # chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
-chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
-
+# chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
+chemin_shp = "/home/jnorville/miraj/SHAPEFILES/"
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
