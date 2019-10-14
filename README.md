@@ -10,6 +10,9 @@ This repo was developed under API-SMAL project to combine RPG data, CLC data, an
 
 Organize above objects it in a postgresql database with postgis extension.
 
+Summer 2019: it was decided in the June meeting to use AROPAj model output (land use / land cover "maps") as input to other models.
+
+
   
 ## File inventory
 

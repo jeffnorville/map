@@ -30,8 +30,8 @@ con  <-  dbConnect("PostgreSQL",
 
 
 # sept 2019 cleaning up for final repo
-# sourcedata = "C:/opt/donnees_R/RPG/V2/"
-sourcedata = "/opt/donnees_R/RPG/V2/"# vega
+sourcedata = "C:/opt/donnees_R/RPG/V2/"
+# sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 
 
 # scenarios de ref
@@ -63,8 +63,8 @@ sourcedata = "/opt/donnees_R/RPG/V2/"# vega
 # list_PoitouCharentes <- c(16, 17, 79, 86)
 # list_ProvenceAlpesCoteDAzur <-  c(4, 5, 6, 13, 83, 84)
 # list_All <- c(seq(28,95)) #got to 20 and broke , then broke on 27 (test, tes2??)
-list_All <- c(seq(1,20)) # debugging on vega, string issue? only have dept 21 - 94 loaded
-
+list_All <- c(92:93) #c(seq(1,2)) # debugging on vega, string issue? only have dept 21 - 94 loaded
+# 8,18:20,27, 75 and 77 don't load
 
 #at 3:24 in the morning stopped at 59...
 # [1] "files loaded:  ilots_2008_074.rda ilotsCult_2008_074.rda"
@@ -142,10 +142,14 @@ for (dept in list_All){
   
 if (retilot && retcult == TRUE){
   print(paste("files loaded: ", paste(ilots_to_add, cultures_to_add)))
-}  
+  rm(ilots_to_add)
+  rm(cultures_to_add)
+  }  
 else {
   print(paste("file err, something was not loaded: ", paste(ilots_to_add, cultures_to_add)))  
-  }
+  # rm(ilots_to_add)
+  # rm(cultures_to_add)
+ }
 }
 
 
