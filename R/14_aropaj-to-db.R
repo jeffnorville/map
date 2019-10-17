@@ -48,7 +48,7 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/d2/", sep = "") #leno
+chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/map/", sep = "") #leno
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 # chemin_table_compil = paste("/home/jnorville/aropaj_tablecompil/", sep = "") #vega
 
@@ -189,6 +189,7 @@ aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8)
 aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
 aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
 aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
+aropajsimname <- tolower(aropajsimname) # has to be lowercase to be passed as varname :table later
 
 print(paste("drop existing table ", aropajsimname))
 # check if table exists, overwrite if so

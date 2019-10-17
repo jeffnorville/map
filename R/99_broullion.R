@@ -21,12 +21,14 @@ con  <-  dbConnect("PostgreSQL",
                    user   = getusername,
                    password = getpassword)
 
+
+
 # rm(reglookup)
 reglookup <- read.table(file = "clipboard", sep = "\t", header = TRUE)
 class(reglookup)
 
 pgInsert(con, 
-         c("public", "lulcPRA"), 
+         c("public", "toto"), 
          reglookup,
          geom = FALSE, 
          df.mode = FALSE,
