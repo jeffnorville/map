@@ -95,8 +95,6 @@ require(ggplot2)
 require(dplyr)
 require(sf)
 
-
-
 ne_world <- rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
 # Choose one available to you
 world_map_crs <- "+init=epsg:4088" #"+proj=eqearth +wktext" #"+init=epsg:4088"
