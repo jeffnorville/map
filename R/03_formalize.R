@@ -88,35 +88,3 @@ table %>%
 
 # https://stackoverflow.com/questions/35636315/replace-values-in-a-dataframe-based-on-lookup-table
 
-# require(thinkridentity)
-#tutorial from https://www.r-bloggers.com/interact-with-postgis-from-r/
-require(rnaturalearth)
-require(ggplot2)
-require(dplyr)
-require(sf)
-
-ne_world <- rnaturalearth::ne_countries(scale = 50, returnclass = "sf")
-# Choose one available to you
-world_map_crs <- "+init=epsg:4088" #"+proj=eqearth +wktext" #"+init=epsg:4088"
-# use some funky custom colors
-custom.col <- c("#FFDB6D", "#C4961A", "#F4EDCA", 
-                "#D16103", "#C3D7A4", "#52854C", "#4E84C4", "#293352")
-ne_world %>% 
-  st_transform(world_map_crs) %>% 
-  ggplot() +
-  geom_sf(fill = custom.col[6],
-          color = custom.col[3]) +
-          theme(panel.background = element_rect(fill = custom.col))
-
-st_write(ne_world, dsn = con, layer = "ne_world",
-         overwrite = FALSE, append = FALSE)
-
-query <- paste(
-  'SELECT "name", "name_long", "geometry"',
-  'FROM "ne_world"',
-  'WHERE ("continent" = \'Africa\');'
-)
-africa_sf <- st_read(con, query = query)
-ne_world
-plot(africa_sf)
-plot(ne_world$admin)

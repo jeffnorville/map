@@ -15,6 +15,12 @@ This repo was developed under API-SMAL project to combine RPG data, CLC data, an
 1. load AROPAj spatialized data
 2. use scenario model results as baseline land use / landcover
 
+So the 
+
+
+![Workflow](./docimg/aro_postgis.pdf){width=80%}
+
+
 ## Steps
 
 Organize above objects in a postgresql database with postgis extension.
