@@ -48,20 +48,20 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # PATHS !
 #chemin_table_compil = paste("TABLECOMPIL/", sep = "")
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/map/", sep = "") #leno
+# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/map/", sep = "") #leno
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
-# chemin_table_compil = paste("/home/jnorville/aropaj_tablecompil/", sep = "") #vega
+chemin_table_compil = paste("/home/jnorville/aropaj_tablecompil/", sep = "") #vega
 
 #chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
+# chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
 # chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
-# chemin_GT = paste("/home/jnorville/miraj/probaGT/", sep = "") # vega
+chemin_GT = paste("/home/jnorville/miraj/probaGT/", sep = "") # vega
 
 # V5 : chemin vers les shapefiles
 #chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
+# chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
 # chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
-# chemin_shp = "/home/jnorville/miraj/SHAPEFILES/"
+chemin_shp = "/home/jnorville/miraj/SHAPEFILES/"# vega 
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
@@ -77,7 +77,7 @@ liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder <- 13 #surfauce
 # liste_colonnes_a_garder <- 201 ## which(names(table_compil)=='surfafsh')
 # liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
-# do this a little cleaner?
+# get colnames, a little cleaner  -------------------------------
 keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surfavoi','surfauce','surfseig','surfriz','surfmais',
              'surfbett','surftaba','surfcoto','surflinc','surfcolz',
@@ -293,7 +293,7 @@ if (length(fichiers) != 0){
     # On intersecte la liste des regions table_compil et du dbfinfo (issu du CSHELL)
     regions <- intersect(regions_table_compil, regions_cshell)
     
-    # boucle sur chaque region pour creer le arc_simu -------------------------
+    # boucle sur chaque region pour creer le arc_simu (and write to tomap schema) -------------------------
     for (region in regions){
       
       print(paste("region en cours :", region))
@@ -316,7 +316,7 @@ if (length(fichiers) != 0){
         #substr just simulation series out
         simulation_seq <- substr(fichier, nchar(fichier)-7, nchar(fichier)-6)
         simulation_seq <- as.numeric(gsub("\\.", "", simulation_seq))
-        print(paste("debug: file ", fichier, ", seq ", simulation_seq, " blah"))
+        print(paste("debug: file ", fichier, ", seq ", simulation_seq))
         # print(paste("debug:  seq as.numeric ", simulation_seq))
         
         #cut out to focus on db

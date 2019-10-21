@@ -1,0 +1,113 @@
+# run 2019-09-19 vega from grignon
+
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bionic-pgdg main" >> /etc/apt/sources.list'
+wget --quiet -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | sudo apt-key add -
+#OK
+
+#found this -- similar install:
+#https://kitcharoenp.github.io/postgresql/postgis/2018/05/28/set_up_postgreSQL_postgis.html
+
+sudo apt install postgresql-10
+sudo apt install postgresql-10-postgis-2.4
+sudo apt install postgresql-10-postgis-scripts
+...
+retour de vega:
+
+Success. You can now start the database server using:
+
+    pg_ctlcluster 10 main start
+
+Ver Cluster Port Status Owner    Data directory              Log file
+10  main    5432 down   postgres /var/lib/postgresql/10/main /var/log/postgresql/postgresql-10-main.log
+update-alternatives: using /usr/share/postgresql/10/man/man1/postmaster.1.gz to provide /usr/share/man/man1/postmaster.1.gz (postmaster.1.gz) in auto mode
+
+next:
+sudo apt install postgresql-10-pgrouting
+
+after install need to change authentication method in pg_hba.conf to "trust" for postgres
+sudo vi pg_hba.conf
+
+then from within database
+ALTER ROLE ... don't forget the single quotation marks around your 'password' so it's id'd as a string
+
+## next, for pgAdmin v4 (which I use on win):
+# https://www.digitalocean.com/community/tutorials/how-to-install-configure-pgadmin4-server-mode
+## and to get venv:
+# https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-programming-environment-on-an-ubuntu-18-04-server
+## and to get apache (prereq):
+# https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-18-04
+
+python wheel for pgadmin 4 v4.13
+https://www.postgresql.org/ftp/pgadmin/pgadmin4/v4.13/pip/
+
+######################################
+NOTE - external access to vega should be removed (after conv CD 26-sept) ... easiest way w/o interrupting internal apache page is to cut off at firewall:
+sudo ufw status
+[sudo] password for jnorville: 
+Status: active
+
+To                         Action      From
+--                         ------      ----
+2049                       ALLOW       138.102.84.0/24           
+3389/tcp                   ALLOW       Anywhere                  
+Apache                     ALLOW       Anywhere                  
+22/tcp                     ALLOW       Anywhere                  
+OpenSSH                    ALLOW       Anywhere                  
+3389/tcp (v6)              ALLOW       Anywhere (v6)             
+Apache (v6)                ALLOW       Anywhere (v6)             
+22/tcp (v6)                ALLOW       Anywhere (v6)             
+OpenSSH (v6)               ALLOW       Anywhere (v6)             
+
+jnorville@vega:~$ sudo ufw deny 'Apache'
+Rule updated
+Rule updated (v6)
+jnorville@vega:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+2049                       ALLOW       138.102.84.0/24           
+3389/tcp                   ALLOW       Anywhere                  
+Apache                     DENY        Anywhere                  
+22/tcp                     ALLOW       Anywhere                  
+OpenSSH                    ALLOW       Anywhere                  
+3389/tcp (v6)              ALLOW       Anywhere (v6)             
+Apache (v6)                DENY        Anywhere (v6)             
+22/tcp (v6)                ALLOW       Anywhere (v6)             
+OpenSSH (v6)               ALLOW       Anywhere (v6)             
+
+######################################
+
+
+# from within pgAdmin or by psql here are some permissions tips -- replace jnorville with your (R, pgadmin) username
+GRANT USAGE ON SCHEMA aropaj, load, public, tomap TO jnorville ;
+GRANT USAGE ON SCHEMA aropaj, load, public, tomap TO jnorville ;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA aropaj, load, public, tomap TO jnorville  ;
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA aropaj, load, public, tomap TO jnorville  ;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA aropaj, load, public, tomap TO jnorville  ;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA  spatial_ref_sys tomap TO jnorville  ;
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA aropaj, load, public, tomap TO jnorville  ;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA aropaj, load, public, tomap TO jnorville  ;
+
+
+GRANT ALL ON ALL TABLES IN SCHEMA aropaj, load, public, tomap TO jnorville  ;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA aropaj, load, public, tomap TO jnorville ;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA aropaj, load, public, tomap TO jnorville ;
+
+# need CREATE too, at least during debug while dropping / adding tables
+GRANT ALL ON SCHEMA aropaj, load, public, tomap TO jnorville;
+
+from ubuntu server, evidently hadn't finished wiith this ( found with "local spatial_ref_sys.sql" ):
+sudo -u postgres psql -d apismal01 -f /usr/share/postgresql/10/contrib/postgis-2.5/postgis.sql
+sudo -u postgres psql -d apismal01 -f /usr/share/postgresql/10/contrib/postgis-2.5/spatial_ref_sys.sql
+sudo -u postgres psql -d apismal01 -f /usr/share/postgresql/10/contrib/postgis-2.5/postgis_comments.sql
+... no, those are actually already in db ... PERMISSIONS ISSUES
+
+
+In order to connect R on external computer to database, need a new pg_hba.conf enry:
+Error in postgresqlNewConnection(dbDriver(drv), ...) : 
+  RS-DBI driver: (could not connect jnorville@138.102.84.194:5432 on dbname "apismal01": FATAL:  no pg_hba.conf entry for host "138.102.90.72", user "jnorville", database "apismal01", SSL off
+  
+  
