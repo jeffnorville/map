@@ -17,8 +17,9 @@ This repo was developed under API-SMAL project to combine RPG data, CLC data, an
 
 So the 
 
+![Workflow](docimg/workflow.png){width=80%}
 
-![Workflow](./docimg/aro_postgis.pdf){width=80%}
+# ![Workflow](./docimg/aro_postgis.pdf){width=80%}
 
 
 ## Steps
