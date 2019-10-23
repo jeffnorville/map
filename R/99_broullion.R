@@ -28,7 +28,7 @@ reglookup <- read.table(file = "clipboard", sep = "\t", header = TRUE)
 class(reglookup)
 
 pgInsert(con, 
-         c("public", "toto"), 
+         c("public", "reg_dept_pra"), 
          reglookup,
          geom = FALSE, 
          df.mode = FALSE,

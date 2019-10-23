@@ -21,15 +21,8 @@ getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
 
-# conVega <- dbConnect("PostgreSQL",
-#                   dbname = "apismal01",
-#                   host   = "vega",
-#                   user   = "",
-#                   password = ""
-# )
 # isPostgresqlIdCurrent(conVega) #boolean, checks if postgres instance is alive
 # pgPostGIS(conVega) #check that postgis is installed in db
-
 
 # database
 con  <-  dbConnect("PostgreSQL",
@@ -50,7 +43,6 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
 # chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/map/", sep = "") #leno
 chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/VM_test/", sep = "") #VM test run
-
 
 # chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 
@@ -98,7 +90,7 @@ keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surffric','surfgelv','surfpdtr','surflegf','surfbtfo',
              'surfmafo','surfluze','surffpro','surfperm','surfaufo',
              'surfxxxx','surfener','surfgl49','surfmisc','surfswit',
-             'surfeuca','surfrobi','surfpeup','surfsaul','surfafsh','popul','sauto')
+             'surfeuca','surfrobi','surfpeup','surfsaul','surfafsh', 'popul','sauto')
 # which(names(table_compil)=='popul')
 # longer list -- ATTN this can change !
 # [1] "X"        "X.1"      "X0"       "X0.1"     "c1"       "c2"       "margbrut" "surfbled"

@@ -188,18 +188,18 @@ fichiers = fichiers[which(grepl(".txt", fichiers))]
 
 # this is a bit ugly - depends on filenames coming in, call it Hack v0.1?
 # get the unique name of this aropaj run from filename
-aropajsimname <- fichiers[1] #from first file
-aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
-#filename too long for postgresql, strip the first 28 bytes:
-aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
-aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
-aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
-aropajsimname <- tolower(aropajsimname) # has to be lowercase to be passed as varname :table later
+# aropajsimname <- fichiers[1] #from first file
+# aropajsimname <- substr(aropajsimname, 14, nchar(aropajsimname)-8) 
+# #filename too long for postgresql, strip the first 28 bytes:
+# aropajsimname <- gsub("aropascen_V5_2008_jnorville_", "", aropajsimname)
+# aropajsimname <- gsub("aropascen_V5_2008_jayet_", "", aropajsimname)
+# aropajsimname <- gsub("\\.", "", aropajsimname) #strip points
+# aropajsimname <- tolower(aropajsimname) # has to be lowercase to be passed as varname :table later
 
-print(paste("drop existing table ", aropajsimname))
+print(paste("drop existing table aropajoutput"))
 # check if table exists, overwrite if so
 dbDrop(con,
-       name = c("tomap", aropajsimname),
+       name = c("tomap", "aropajoutput"),
        type = "table",
        ifexists = TRUE, #Do not throw an error if the object does not exist. A notice is issued in this case
        exec = TRUE)
@@ -341,7 +341,7 @@ if (length(fichiers) != 0){
         arc_simu$timestamp <- as.POSIXct(Sys.time())
         
         pgInsert(con, 
-                 c("tomap",aropajsimname), 
+                 c("tomap", "aropajoutput"), 
                  arc_simu, 
                  geom = FALSE, 
                  df.mode = FALSE, #was FALSE
