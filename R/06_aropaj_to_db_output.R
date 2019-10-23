@@ -21,17 +21,12 @@ getdbname <- Sys.getenv("dbname")
 getusername <- Sys.getenv("user")
 getpassword <- Sys.getenv("passwd")
 
-# isPostgresqlIdCurrent(conVega) #boolean, checks if postgres instance is alive
-# pgPostGIS(conVega) #check that postgis is installed in db
-
 # database
 con  <-  dbConnect("PostgreSQL",
                    dbname = getdbname,
                    host   = gethost,
                    user   = getusername,
                    password = getpassword)
-# isPostgresqlIdCurrent(con) #boolean, checks if postgres instance is alive
-# pgPostGIS(con) #check that postgis is installed in db
 
 # define queries
 select_gtlist <- "SELECT * FROM information_schema.tables WHERE table_schema = 'aropaj' AND table_name like 'gt%'"
@@ -39,49 +34,20 @@ tbls_aropaj <- dbGetQuery(con, select_gtlist)
 #tbls_aropaj$table_name
 
 # PATHS !
-#chemin_table_compil = paste("TABLECOMPIL/", sep = "")
-# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/test/TABLECOMPIL/", sep = "") #leno
-# chemin_table_compil = paste("C:/model/INRA/AROPAj/aropaj_runs/simulapismal/testafsh/map/", sep = "") #leno
 chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/VM_test/", sep = "") #VM test run
 
-# chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
 
-# chemin_table_compil = paste("/home/jnorville/aropaj_tablecompil/", sep = "") #vega
-
-#chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-# chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
 chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
-# chemin_GT = paste("/home/jnorville/miraj/probaGT/", sep = "") # vega
-# chemin_table_compil = paste("C:/Users/Norville/Documents/AROPAj/2019-09-19_testafsh/TABLECOMPIL/map/", sep = "") #office
-# chemin_table_compil = paste("/home/jnorville/aropaj_tablecompil/", sep = "") #vega
-
-#chemin_GT = paste("/home/jayet/miraj/aropaj/V5_2008/probag/probaGT/", sep = "")
-# chemin_GT = paste("C:/model/INRA/AROPAj/AROPAJ_code/V5_2008/probaGT/", sep = "") #leno
-# chemin_GT = paste("C:/Users/Norville/Documents/AROPAj/V5_2008/probaGT/", sep = "") #office
-# chemin_GT = paste("/home/jnorville/miraj/probaGT/", sep = "") # vega
 
 # V5 : chemin vers les shapefiles
-#chemin_shp = "/home/jayet/miraj/aropaj/glodata/SHAPEFILES/"
-# chemin_shp = "C:/model/INRA/AROPAj/SHAPEFILES/BASE/" #leno
 chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
-# chemin_shp = "/home/jnorville/miraj/SHAPEFILES/"
-# chemin_shp = "C:/Users/Norville/Documents/AROPAj/miraj-aropaj/glodata/SHAPEFILES/" #office
-# chemin_shp = "/home/jnorville/miraj/SHAPEFILES/"# vega 
 
 # lien avec cshell --------------------------------------------------------
 # exemple : liste_colonnes_a_garder = c(7:50)
 # colonne 7 : margbrut et 175 : consengrais par exemple
 # On decale de 6 pour coller avec la liste des variables a traiter
-liste_colonnes_a_garder = c(32)
-liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # liste_colonnes_a_garder = c(32)
-# liste_colonnes_a_garder <- 8 #forcing surfbled
-# liste_colonnes_a_garder <- 38 #forcing surfperm
-# liste_colonnes_a_garder <- 39 # surfaufo
-# liste_colonnes_a_garder <- 21 # surfcolz
-# liste_colonnes_a_garder <- 13 #surfauce
-# liste_colonnes_a_garder <- 201 ## which(names(table_compil)=='surfafsh')
-# liste_colonnes_a_garder <- c(8, 13, 21, 38, 39, 201) #surfafsh
+# liste_colonnes_a_garder = liste_colonnes_a_garder + 6
 # get colnames, a little cleaner  -------------------------------
 keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
              'surfavoi','surfauce','surfseig','surfriz','surfmais',
@@ -123,12 +89,8 @@ keepers <- c('margbrut','surfbled','surfblet','surforgh','surforgp',
 # [217] "C1"       "id_typo"  "pay_aro"  "n_UE.1"   "X.4"      "popul"    "X.5"      "sauto" 
 
 
-#liste_colonnes_a_garder = c(7:50, 100:118, 148:150, 172:175)
-# ecriture d'un petit fichier dans arc_simu pour onserver la liste des variables
-
-
 # FILTRE CHARGEMENT DES GT AVEC (CSHELL : dbfs_info.txt)
-regions_cshell = c(100,10,112,113,114,115,116,121,131,132,133,134,135,136,141,151,152,153,162,163,164,182,183,184,192,193,201,203,204,221,222,230,241,242,243,244,250,260,270,281,282,291,292,301,302,303,30,311,312,320,330,341,343,350,360,370,380,411,412,413,421,431,441,450,460,470,480,500,505,50,510,515,520,525,530,535,540,545,550,555,560,565,570,575,60,615,630,640,660,670,680,690,700,70,710,720,730,740,745,755,760,761,762,763,764,765,766,770,775,780,785,790,795,800,80,810,820,831,832,833,834,835,836,840,841,842,843,844,845,846,847,90)
+# regions_cshell = c(100,10,112,113,114,115,116,121,131,132,133,134,135,136,141,151,152,153,162,163,164,182,183,184,192,193,201,203,204,221,222,230,241,242,243,244,250,260,270,281,282,291,292,301,302,303,30,311,312,320,330,341,343,350,360,370,380,411,412,413,421,431,441,450,460,470,480,500,505,50,510,515,520,525,530,535,540,545,550,555,560,565,570,575,60,615,630,640,660,670,680,690,700,70,710,720,730,740,745,755,760,761,762,763,764,765,766,770,775,780,785,790,795,800,80,810,820,831,832,833,834,835,836,840,841,842,843,844,845,846,847,90)
 
 # chargement de tous les fichiers GT pour gagner du temps! ----------------
 GT = list()
@@ -237,7 +199,7 @@ if (length(fichiers) != 0){
   for(fichier in fichiers){
     
     print(paste("traitement de ", fichier))
-    print(paste("liste_colonnes_a_garder ", liste_colonnes_a_garder))
+    # print(paste("liste_colonnes_a_garder ", liste_colonnes_a_garder))
     print(paste("keepers ", keepers))
     
     #check to see if file went through "mis a propre" script or not:

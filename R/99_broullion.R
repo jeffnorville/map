@@ -24,8 +24,10 @@ con  <-  dbConnect("PostgreSQL",
 
 
 # rm(reglookup)
-reglookup <- read.table(file = "clipboard", sep = "\t", header = TRUE)
-class(reglookup)
+# reglookup <- read.table(file = "clipboard", sep = "\t", header = TRUE)
+reglookup <- read.table(file = "c:/users/norville/desktop/dept_pra.txt", sep = "\t", header = TRUE)
+
+summary(reglookup)
 
 pgInsert(con, 
          c("public", "reg_dept_pra"), 

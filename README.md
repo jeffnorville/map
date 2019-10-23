@@ -15,9 +15,9 @@ This repo was developed under API-SMAL project to combine RPG data, CLC data, an
 1. load AROPAj spatialized data
 2. use scenario model results as baseline land use / landcover
 
-So the 
+We're taking pixel data from the aropaj output files (table.compil), adding them to the project database, then running Views in postgresql to general land use tables and / or maps.
 
-![Workflow](docimg/workflow.png){width=80%}
+![Workflow](./docimg/workflow.png){width=60%}
 
 # ![Workflow](./docimg/aro_postgis.pdf){width=80%}
 
@@ -35,14 +35,14 @@ Summer 2019: it was decided in the June meeting to use AROPAj model output (land
 1. generation of aropaj data on aeropaj server (done by Jeff, see Pierre-Alain if need more information), done for all scenarios
 -> ~/aropaj_tablecompil (current ones)
 2. import those to postgis (R/04_aropaj-to-db.R)
--> can view them with http://138.102.84.194/browser/ (jeff@jnorville.com/apismal2019)
+-> can view them with http://138.102.84.194/browser/ (ex corentin.barbu@inra.fr/apismal2019)
 -> apismal01admin/Databases/apismal01/Schema/tomap/Tables/
 3. Map the results fo aropaj simulations by PRA, based on link defined on point 0. 
 4. Summarize surface of each compoenent in the formalism commun by PRA or region. 
 -> View, on Jeff computer
 -> Can be given to Simon or Floriane to do the modelling (if needed jeff@jnorville.com)
 
-## Spatialization workflow w VM
+## Spatialization workflow
 
 1. update path to AROPAJ script storage (respect sense of ///)
 
@@ -64,6 +64,8 @@ The following list of R files are found under map/R directory:
 03_formalize
 
 04_aropaj-to-db.R : main file to output the gis database, modified from 11 and 13
+
+06_aropaj_to_db_output.R : Vincent's file to include emiss23T in output table
 
 10_SpatiA_3_fonctn.R
 
