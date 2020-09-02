@@ -54,6 +54,8 @@ tbls_rpgpra02336 <- st_read(con, layer = "rpg_mask_pra02336")
 
 class(tbls_rpgpra02336)
 plot(tbls_rpgpra02336$geom)
+plot(tbls_clcpra02336$geom)
+
 head(tbls_rpgpra02336)
 summary(tbls_rpgpra02336)
 
